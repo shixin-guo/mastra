@@ -8,6 +8,10 @@ const meta = {
     title: 'Showcase',
     type: 'page',
   },
+  overview: {
+    title: 'Docs',
+    type: 'page',
+  },
   guides: {
     title: 'Guides',
     collapsed: false,
