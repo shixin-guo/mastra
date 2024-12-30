@@ -1,5 +1,9 @@
 const meta = {
   index: 'Introduction',
+  overview: {
+    title: 'Docs',
+    type: 'page',
+  },
   'getting-started': {
     title: 'Getting Started',
     collapsed: false,
