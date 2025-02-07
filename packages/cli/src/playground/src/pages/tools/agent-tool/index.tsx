@@ -85,10 +85,10 @@ const AgentTool = () => {
   ];
 
   return (
-    <div className="flex flex-col h-full w-full bg-mastra-bg-1">
+    <div className="flex flex-col h-full w-full bg-mastra-bg-1 overflow-y-hidden">
       <Header title={<Breadcrumb items={breadcrumbItems} />} />
-      <div className="w-full h-full grid grid-cols-[1fr_2fr] p-2 gap-2">
-        <div className="flex flex-col gap-4 border-[0.5px] border-mastra-border-1 rounded-[0.25rem] bg-mastra-bg-2 p-4 py-6">
+      <div className="w-full h-full grid grid-cols-[1fr_2fr] p-2 gap-2 overflow-y-hidden">
+        <div className="flex flex-col gap-4 border-[0.5px] border-mastra-border-1 rounded-[0.25rem] bg-mastra-bg-2 p-4 py-6 overflow-y-hidden">
           <Text variant="secondary" className="text-mastra-el-3 px-4" size="xs">
             Input
           </Text>
@@ -100,7 +100,7 @@ const AgentTool = () => {
             }}
           />
         </div>
-        <div className="flex relative group flex-col gap-4 border-[0.5px] border-mastra-border-1 rounded-[0.25rem] bg-mastra-bg-2 p-4 py-6">
+        <div className="flex relative group flex-col gap-4 border-[0.5px] border-mastra-border-1 rounded-[0.25rem] bg-mastra-bg-2 p-4 py-6 overflow-y-hidden">
           <Text variant="secondary" className="text-mastra-el-3  px-4" size="xs">
             Output
           </Text>

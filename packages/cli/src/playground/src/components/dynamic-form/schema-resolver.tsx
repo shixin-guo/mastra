@@ -152,19 +152,6 @@ function resolveSchemaComponent({
     );
   }
 
-  if (schema instanceof z.ZodArray) {
-    return resolveSchemaComponent({
-      schema: schema.element,
-      parentField,
-      control,
-      formValues,
-      errors,
-      handleFieldChange,
-      isOptional,
-      isNullable,
-    });
-  }
-
   return (
     <div key={parentField}>
       {schemaToFormFieldRenderer({
