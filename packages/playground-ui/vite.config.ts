@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import tailwindcss from 'tailwindcss';
 import { defineConfig } from 'vite';
 import dts from 'vite-plugin-dts';
+import { libInjectCss } from 'vite-plugin-lib-inject-css';
 
 export default defineConfig({
   plugins: [
@@ -11,6 +12,7 @@ export default defineConfig({
     dts({
       insertTypesEntry: true,
     }),
+    libInjectCss(),
   ],
   resolve: {
     alias: {
@@ -30,12 +32,13 @@ export default defineConfig({
       fileName: format => `index.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'lucide-react'],
+      external: ['react', 'react-dom', 'lucide-react', 'tailwindcss'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
           'lucide-react': 'LucideReact',
+          tailwindcss: 'tailwindcss',
         },
       },
     },

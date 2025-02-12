@@ -11,6 +11,8 @@ import { MessageList } from './ui/message-list';
 import { PromptSuggestions } from './ui/prompt-suggestions';
 import { ScrollArea } from './ui/scroll-area';
 
+// Import the styles
+
 export function Chat({ agentId, initialMessages = [], agentName, threadId, memory }: ChatProps) {
   console.log({
     agentId,

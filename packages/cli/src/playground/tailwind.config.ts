@@ -134,5 +134,5 @@ export default {
     },
   },
   plugins: [require('tailwindcss-animate')],
-  content: ['./src/**/*.{js,ts,jsx,tsx,html}'],
+  content: ['./src/**/*.{js,ts,jsx,tsx,html}', './node_modules/@mastra/playground/**/*.{js,ts,jsx,tsx}'],
 } satisfies Config;
