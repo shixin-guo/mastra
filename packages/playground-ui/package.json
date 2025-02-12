@@ -3,8 +3,8 @@
   "type": "module",
   "version": "0.0.1",
   "description": "Mastra Playground components",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist"
@@ -12,12 +12,15 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
-    }
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    },
+    "./style.css": "./dist/style.css"
   },
   "scripts": {
-    "build": "tsup",
-    "dev": "tsup --watch"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "keywords": [
     "mastra",
@@ -28,6 +31,7 @@
   "license": "ISC",
   "dependencies": {
     "@mastra/client-js": "0.1.0-alpha.12",
+    "@mastra/playground": "^0.0.1",
     "@radix-ui/react-slot": "^1.1.0",
     "react-markdown": "^9.0.1",
     "remark-gfm": "^4.0.0",
@@ -35,13 +39,14 @@
   },
   "peerDependencies": {
     "lucide-react": "^0.475.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.1",
-    "@types/react": "^19.0.8",
-    "@types/react-dom": "^19.0.3",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.20",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -50,7 +55,8 @@
     "shiki": "^1.24.2",
     "tailwind-merge": "^3.0.1",
     "tailwindcss": "3",
-    "tsup": "^8.3.6",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^3.7.0"
   }
 }
