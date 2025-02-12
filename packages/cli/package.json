@@ -48,6 +48,7 @@
   ],
   "author": "",
   "dependencies": {
+    "@mastra/playground": "workspace:*",
     "@clack/prompts": "^0.8.2",
     "@dagrejs/dagre": "^1.1.4",
     "@mastra/core": "workspace:^",

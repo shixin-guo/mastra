@@ -1,4 +1,5 @@
-import { Chat as PlaygroundChat } from '@mastra/playground';
+// import { Chat as PlaygroundChat } from '@mastra/playground';
+import { AgentChat } from '@mastra/playground';
 import { useEffect, useState, useCallback } from 'react';
 import { useSWRConfig } from 'swr';
 
@@ -11,35 +12,41 @@ import { PromptSuggestions } from './ui/prompt-suggestions';
 import { ScrollArea } from './ui/scroll-area';
 
 export function Chat({ agentId, initialMessages = [], agentName, threadId, memory }: ChatProps) {
-  return (
-    <PlaygroundChat
-      agentId={agentId}
-      initialMessages={initialMessages}
-      agentName={agentName}
-      threadId={threadId}
-      memory={memory}
-      buildUrl="http://localhost:4111"
-    />
-  );
+  console.log({
+    agentId,
+    initialMessages,
+    agentName,
+    threadId,
+    memory,
+  });
+
+  return <AgentChat agentId={agentId} />;
+
+  //   <PlaygroundChat
+  //     agentId={agentId}
+  //     initialMessages={initialMessages}
+  //     agentName={agentName}
+  //     threadId={threadId}
+  //     memory={memory}
+  //     buildUrl="http://localhost:4111"
+  //   />
+  // );
+
   // const [messages, setMessages] = useState<Message[]>(initialMessages);
   // const [input, setInput] = useState('');
   // const [isLoading, setIsLoading] = useState(false);
   // const { mutate } = useSWRConfig();
-
   // useEffect(() => {
   //   if (initialMessages) {
   //     setMessages(initialMessages);
   //   }
   // }, [initialMessages]);
-
   // const handleInputChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
   //   setInput(e.target.value);
   // }, []);
-
   // const handleSubmit = async (event?: { preventDefault?: () => void }) => {
   //   event?.preventDefault?.();
   //   if (!input.trim() || isLoading) return;
-
   //   const userMessage = input;
   //   setInput('');
   //   setIsLoading(true);
@@ -48,15 +55,12 @@ export function Chat({ agentId, initialMessages = [], agentName, threadId, memor
   //     role: 'user' as const,
   //     content: userMessage,
   //   };
-
   //   const newAssistantMessage = {
   //     id: (Date.now() + 1).toString(),
   //     role: 'assistant' as const,
   //     content: '',
   //   };
-
   //   setMessages(prev => [...prev, newUserMessage, newAssistantMessage]);
-
   //   try {
   //     const response = await fetch('/api/agents/' + agentId + '/stream', {
   //       method: 'POST',
@@ -66,36 +70,27 @@ export function Chat({ agentId, initialMessages = [], agentName, threadId, memor
   //         ...(memory ? { threadId, resourceid: agentId } : {}),
   //       }),
   //     });
-
   //     if (!response.body) {
   //       throw new Error('No response body');
   //     }
-
   //     if (response.status !== 200) {
   //       const error = await response.json();
   //       throw new Error(error.message);
   //     }
-
   //     mutate(`/api/memory/threads?resourceid=${agentId}`);
-
   //     const reader = response.body.getReader();
   //     const decoder = new TextDecoder();
   //     let buffer = '';
   //     let assistantMessage = '';
   //     let errorMessage = '';
-
   //     try {
   //       while (true) {
   //         const { done, value } = await reader.read();
-
   //         if (done) break;
-
   //         const chunk = decoder.decode(value);
   //         buffer += chunk;
-
   //         const matches = buffer.matchAll(/0:"([^"]*)"/g);
   //         const errorMatches = buffer.matchAll(/3:"([^"]*)"/g);
-
   //         if (errorMatches) {
   //           for (const match of errorMatches) {
   //             const content = match[1];
@@ -106,7 +101,6 @@ export function Chat({ agentId, initialMessages = [], agentName, threadId, memor
   //             ]);
   //           }
   //         }
-
   //         for (const match of matches) {
   //           const content = match[1];
   //           assistantMessage += content;
@@ -132,11 +126,9 @@ export function Chat({ agentId, initialMessages = [], agentName, threadId, memor
   //     setIsLoading(false);
   //   }
   // };
-
   // const lastMessage = messages.at(-1);
   // const isEmpty = messages.length === 0;
   // const isTyping = isLoading && lastMessage?.role === 'assistant' && !lastMessage?.content.trim();
-
   // const append = useCallback(
   //   (message: { role: 'user'; content: string }) => {
   //     setInput(message.content);
@@ -144,9 +136,7 @@ export function Chat({ agentId, initialMessages = [], agentName, threadId, memor
   //   },
   //   [handleSubmit],
   // );
-
   // const suggestions = ['What capabilities do you have?', 'How can you help me?', 'Tell me about yourself'];
-
   // return (
   //   <ChatContainer className="h-full px-4 pb-3 pt-4 max-w-[1000px] mx-auto">
   //     <div className="flex flex-col h-full">
@@ -162,7 +152,6 @@ export function Chat({ agentId, initialMessages = [], agentName, threadId, memor
   //         </ScrollArea>
   //       )}
   //     </div>
-
   //     <div className="flex flex-col mt-auto gap-2">
   //       <ChatForm isPending={isLoading || isTyping} handleSubmit={handleSubmit}>
   //         {({ files, setFiles }) => (

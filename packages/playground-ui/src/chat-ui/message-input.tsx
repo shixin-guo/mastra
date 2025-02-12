@@ -4,7 +4,7 @@ import { omit } from 'remeda';
 
 import { AnimatePresence, motion } from 'motion/react';
 
-import { Button } from '../components/Button';
+import { Button } from '../components/ui/button';
 import { cn } from '../lib/utils';
 
 import { FilePreview } from './file-preview';

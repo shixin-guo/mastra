@@ -12,6 +12,11 @@ export default defineConfig({
       insertTypesEntry: true,
     }),
   ],
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, './src'),
+    },
+  },
   css: {
     postcss: {
       plugins: [tailwindcss, autoprefixer],
