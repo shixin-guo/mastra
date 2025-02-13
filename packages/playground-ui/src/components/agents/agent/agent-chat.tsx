@@ -3,10 +3,18 @@
 import { Thread } from '@/components/assistant-ui/thread';
 
 import { MastraRuntimeProvider } from '@/services/mastra-runtime-provider';
+import { ChatProps } from '@/types';
 
-export const AgentChat = ({ agentId, url }: { agentId: string; url: string }) => {
+export const AgentChat = ({ agentId, agentName, threadId, initialMessages, memory, url }: ChatProps) => {
   return (
-    <MastraRuntimeProvider agentId={agentId} url={url}>
+    <MastraRuntimeProvider
+      agentId={agentId}
+      agentName={agentName}
+      threadId={threadId}
+      initialMessages={initialMessages}
+      memory={memory}
+      url={url}
+    >
       <Thread />
     </MastraRuntimeProvider>
   );

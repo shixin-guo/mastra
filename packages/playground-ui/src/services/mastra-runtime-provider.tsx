@@ -7,9 +7,11 @@ import {
   AssistantRuntimeProvider,
 } from '@assistant-ui/react';
 import { MastraClient } from '@mastra/client-js';
-import { useState, ReactNode, useMemo } from 'react';
+import { useState, ReactNode, useEffect, useMemo } from 'react';
 
-const createMastraClient = (url: string) =>
+import { ChatProps } from '@/types';
+
+const createMastraClient = (url?: string) =>
   new MastraClient({
     baseUrl: url || 'http://localhost:4111',
   });
@@ -21,15 +23,23 @@ const convertMessage = (message: ThreadMessageLike): ThreadMessageLike => {
 export function MastraRuntimeProvider({
   children,
   agentId,
+  initialMessages,
+  agentName,
+  memory,
+  threadId,
   url,
 }: Readonly<{
   children: ReactNode;
-}> & {
-  agentId: string;
-  url: string;
-}) {
+}> &
+  ChatProps) {
   const [isRunning, setIsRunning] = useState(false);
   const [messages, setMessages] = useState<ThreadMessageLike[]>([]);
+
+  useEffect(() => {
+    if (initialMessages && threadId && memory) {
+      setMessages(initialMessages);
+    }
+  }, [initialMessages, threadId, memory]);
 
   const mastra = useMemo(() => createMastraClient(url), [url]);
 
@@ -49,6 +59,7 @@ export function MastraRuntimeProvider({
             content: input,
           },
         ],
+        ...(memory ? { threadId, resourceid: agentId } : {}),
       });
 
       const reader = response.body?.getReader();
