@@ -32,11 +32,12 @@ export default defineConfig({
       fileName: format => `index.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom', 'lucide-react', 'tailwindcss'],
+      external: ['react', 'react-dom', 'react/jsx-runtime', 'lucide-react', 'tailwindcss'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'ReactJsxRuntime',
           'lucide-react': 'LucideReact',
           tailwindcss: 'tailwindcss',
         },
