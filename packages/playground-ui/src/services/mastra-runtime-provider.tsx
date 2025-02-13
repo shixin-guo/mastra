@@ -7,11 +7,12 @@ import {
   AssistantRuntimeProvider,
 } from '@assistant-ui/react';
 import { MastraClient } from '@mastra/client-js';
-import { useState, ReactNode } from 'react';
+import { useState, ReactNode, useMemo } from 'react';
 
-const mastra = new MastraClient({
-  baseUrl: process.env.NEXT_PUBLIC_MASTRA_API_URL || 'http://localhost:4111',
-});
+const createMastraClient = (url: string) =>
+  new MastraClient({
+    baseUrl: url || 'http://localhost:4111',
+  });
 
 const convertMessage = (message: ThreadMessageLike): ThreadMessageLike => {
   return message;
@@ -20,13 +21,17 @@ const convertMessage = (message: ThreadMessageLike): ThreadMessageLike => {
 export function MastraRuntimeProvider({
   children,
   agentId,
+  url,
 }: Readonly<{
   children: ReactNode;
 }> & {
   agentId: string;
+  url: string;
 }) {
   const [isRunning, setIsRunning] = useState(false);
   const [messages, setMessages] = useState<ThreadMessageLike[]>([]);
+
+  const mastra = useMemo(() => createMastraClient(url), [url]);
 
   const onNew = async (message: AppendMessage) => {
     if (message.content[0]?.type !== 'text') throw new Error('Only text messages are supported');
