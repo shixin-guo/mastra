@@ -19,7 +19,20 @@ export const Thread: FC = () => {
         ['--thread-max-width' as string]: '42rem',
       }}
     >
-      <ThreadPrimitive.Viewport className="flex h-full flex-col pb-[calc(98px+2rem)] items-center overflow-y-scroll scroll-smooth bg-inherit px-4 pt-8">
+      <ThreadPrimitive.Viewport
+        style={{
+          paddingTop: '2rem',
+          paddingInline: '1rem',
+          background: 'inherit',
+          scrollBehavior: 'smooth',
+          overflowY: 'scroll',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          height: '100%',
+          flexGrow: 1,
+        }}
+      >
         <ThreadWelcome />
         <ThreadPrimitive.Messages
           components={{
@@ -33,12 +46,7 @@ export const Thread: FC = () => {
           <div className="min-h-8 flex-grow" />
         </ThreadPrimitive.If>
       </ThreadPrimitive.Viewport>
-      <div
-        style={{
-          paddingBottom: '45px',
-        }}
-        className="max-w-[var(--thread-max-width)] bg-[#0f0f0f] px-4"
-      >
+      <div className="max-w-[var(--thread-max-width)] bg-[#0f0f0f] px-4">
         <div className="flex flex-col gap-2">
           <ThreadWelcomeSuggestions />
           <Composer />
@@ -97,7 +105,12 @@ const ThreadWelcomeSuggestions: FC = () => {
 
 const Composer: FC = () => {
   return (
-    <ComposerPrimitive.Root className="relative rounded-2xl focus-within:border-ring/20 flex w-full flex-wrap items-end border bg-inherit px-2.5 shadow-sm transition-colors ease-in">
+    <ComposerPrimitive.Root
+      style={{
+        borderRadius: '16px',
+      }}
+      className="relative focus-within:border-ring/20 flex w-full flex-wrap items-end border bg-inherit px-2.5 shadow-sm transition-colors ease-in"
+    >
       <ComposerPrimitive.Input
         rows={1}
         autoFocus
@@ -117,7 +130,16 @@ const ComposerAction: FC = () => {
           <TooltipIconButton
             tooltip="Send"
             variant="default"
-            className="my-2.5 absolute bottom-3 mt-0 h-8 w-8 rounded-full  right-3 size-8 p-2 transition-opacity ease-in"
+            style={{
+              marginBottom: '0.625rem',
+              position: 'absolute',
+              right: '0.75rem',
+              height: '2rem',
+              width: '2rem',
+              borderRadius: '50%',
+              padding: '0.5rem',
+              transition: 'opacity 0.2s ease-in',
+            }}
           >
             <ArrowUp className="h-6 w-6" />
           </TooltipIconButton>
@@ -128,7 +150,16 @@ const ComposerAction: FC = () => {
           <TooltipIconButton
             tooltip="Cancel"
             variant="default"
-            className="my-2.5 absolute bottom-3 mt-0 h-8 w-8 rounded-full  right-3 size-8 p-2 transition-opacity ease-in"
+            style={{
+              marginBottom: '0.625rem',
+              position: 'absolute',
+              right: '0.75rem',
+              height: '2rem',
+              width: '2rem',
+              padding: '0.5rem',
+              transition: 'opacity 0.2s ease-in',
+              borderRadius: '50%',
+            }}
           >
             <CircleStopIcon />
           </TooltipIconButton>
