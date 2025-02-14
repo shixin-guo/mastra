@@ -1,5 +1,27 @@
 # @mastra/vectorize
 
+## 0.1.0-alpha.45
+
+### Patch Changes
+
+- Updated dependencies [d5fccfb]
+  - @mastra/core@0.2.0-alpha.109
+
+## 0.1.0-alpha.44
+
+### Patch Changes
+
+- Updated dependencies [5ee67d3]
+- Updated dependencies [95a4697]
+  - @mastra/core@0.2.0-alpha.108
+
+## 0.1.0-alpha.43
+
+### Patch Changes
+
+- Updated dependencies [66a5392]
+  - @mastra/core@0.2.0-alpha.107
+
 ## 0.1.0-alpha.42
 
 ### Patch Changes

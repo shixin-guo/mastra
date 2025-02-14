@@ -1,5 +1,24 @@
 # @mastra/core
 
+## 0.2.0-alpha.109
+
+### Patch Changes
+
+- d5fccfb: expose model function
+
+## 0.2.0-alpha.108
+
+### Patch Changes
+
+- 5ee67d3: make trace name configurable for telemetry exporter
+- 95a4697: Fixed trace method for telemetry
+
+## 0.2.0-alpha.107
+
+### Patch Changes
+
+- 66a5392: batchInsert needs init. Use private version for internal calls
+
 ## 0.2.0-alpha.106
 
 ### Patch Changes

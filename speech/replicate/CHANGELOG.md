@@ -1,5 +1,27 @@
 # @mastra/speech-replicate
 
+## 0.1.0-alpha.34
+
+### Patch Changes
+
+- Updated dependencies [d5fccfb]
+  - @mastra/core@0.2.0-alpha.109
+
+## 0.1.0-alpha.33
+
+### Patch Changes
+
+- Updated dependencies [5ee67d3]
+- Updated dependencies [95a4697]
+  - @mastra/core@0.2.0-alpha.108
+
+## 0.1.0-alpha.32
+
+### Patch Changes
+
+- Updated dependencies [66a5392]
+  - @mastra/core@0.2.0-alpha.107
+
 ## 0.1.0-alpha.31
 
 ### Patch Changes
