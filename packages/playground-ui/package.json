@@ -1,5 +1,5 @@
 {
-  "name": "@mastra/playground",
+  "name": "@mastra/playground-ui",
   "type": "module",
   "version": "0.0.1-alpha.1",
   "description": "Mastra Playground components",
