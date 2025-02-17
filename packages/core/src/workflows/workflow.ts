@@ -1,3 +1,5 @@
+import { trace, context as otlpContext } from '@opentelemetry/api';
+import type { Span } from '@opentelemetry/api';
 import { get } from 'radash';
 import sift from 'sift';
 import { assign, createActor, fromPromise, type MachineContext, setup, type Snapshot } from 'xstate';
@@ -60,6 +62,8 @@ export class Workflow<
   #stepGraph: StepGraph = { initial: [] };
   #stepSubscriberGraph: Record<string, StepGraph> = {};
   #steps: Record<string, IAction<any, any, any, any>> = {};
+  #onStepTransition: Set<(state: WorkflowRunState) => void | Promise<void>> = new Set();
+  #executionSpan: Span | undefined;
 
   /**
    * Creates a new Workflow instance
@@ -258,11 +262,12 @@ export class Workflow<
     if (runId) {
       this.#runId = runId;
       // First, let's log the incoming snapshot for debugging
-      this.logger.debug('Incoming snapshot', {
-        snapshot: snapshot,
-        runId: this.#runId,
-      });
+      this.logger.debug(`Workflow snapshot received`, { runId: this.#runId, snapshot });
     }
+
+    this.#executionSpan = this.#mastra?.telemetry?.tracer.startSpan(`workflow.${this.name}.execute`, {
+      attributes: { componentName: this.name, runId: this.#runId },
+    });
 
     const machineInput = snapshot
       ? (snapshot as any).context
@@ -279,10 +284,7 @@ export class Workflow<
           ),
         };
 
-    this.logger.debug('Machine input prepared', {
-      machineInput,
-      runId: this.#runId,
-    });
+    this.logger.debug(`Machine input prepared`, { runId: this.#runId, machineInput });
 
     const actorSnapshot = snapshot
       ? {
@@ -291,7 +293,7 @@ export class Workflow<
         }
       : undefined;
 
-    this.logger.debug('Creating actor with configuration', {
+    this.logger.debug(`Creating actor with configuration`, {
       machineInput,
       actorSnapshot,
       machineStates: this.#machine.config.states,
@@ -320,12 +322,26 @@ export class Workflow<
 
     return new Promise((resolve, reject) => {
       if (!this.#actor) {
-        reject(new Error('Actor not initialized'));
+        const e = new Error('Actor not initialized');
+        this.#executionSpan?.recordException(e);
+        this.#executionSpan?.end();
+        reject(e);
         return;
       }
 
       const suspendedPaths: Set<string> = new Set();
       this.#actor.subscribe(async state => {
+        if (this.#onStepTransition) {
+          this.#onStepTransition.forEach(onTransition => {
+            onTransition({
+              runId: this.#runId,
+              value: state.value as Record<string, string>,
+              context: state.context as WorkflowContext,
+              activePaths: this.#getActivePathsAndStatus(state.value as Record<string, string>),
+              timestamp: Date.now(),
+            });
+          });
+        }
         this.#getSuspendedPaths({
           value: state.value as Record<string, string>,
           path: '',
@@ -353,6 +369,7 @@ export class Workflow<
           await this.#persistWorkflowSnapshot();
           // Then cleanup and resolve
           this.#cleanup();
+          this.#executionSpan?.end();
           resolve({
             triggerData,
             results: state.context.steps,
@@ -364,6 +381,7 @@ export class Workflow<
           this.logger.debug('Failed to persist final snapshot', { error });
 
           this.#cleanup();
+          this.#executionSpan?.end();
           resolve({
             triggerData,
             results: state.context.steps,
@@ -445,10 +463,16 @@ export class Workflow<
       states: {
         pending: {
           entry: () => {
-            this.logger.debug(`Step ${stepNode.step.id} pending`);
+            this.logger.debug(`Step ${stepNode.step.id} pending`, {
+              stepId: stepNode.step.id,
+              runId: this.#runId,
+            });
           },
           exit: () => {
-            this.logger.debug(`Step ${stepNode.step.id} finished pending`);
+            this.logger.debug(`Step ${stepNode.step.id} finished pending`, {
+              stepId: stepNode.step.id,
+              runId: this.#runId,
+            });
           },
           invoke: {
             src: 'conditionCheck',
@@ -519,7 +543,7 @@ export class Workflow<
                   steps: ({ context, event }) => {
                     if (event.output.type !== 'CONDITION_FAILED') return context.steps;
 
-                    this.logger.debug(`workflow condition check failed`, {
+                    this.logger.debug(`Workflow condition check failed`, {
                       error: event.output.error,
                       stepId: stepNode.step.id,
                     });
@@ -539,10 +563,18 @@ export class Workflow<
         },
         waiting: {
           entry: () => {
-            this.logger.debug(`Step ${stepNode.step.id} waiting ${new Date().toISOString()}`);
+            this.logger.debug(`Step ${stepNode.step.id} waiting`, {
+              stepId: stepNode.step.id,
+              timestamp: new Date().toISOString(),
+              runId: this.#runId,
+            });
           },
           exit: () => {
-            this.logger.debug(`Step ${stepNode.step.id} finished waiting ${new Date().toISOString()}`);
+            this.logger.debug(`Step ${stepNode.step.id} finished waiting`, {
+              stepId: stepNode.step.id,
+              timestamp: new Date().toISOString(),
+              runId: this.#runId,
+            });
           },
           after: {
             [stepNode.step.id]: {
@@ -554,7 +586,10 @@ export class Workflow<
           type: 'final',
           entry: [
             () => {
-              this.logger.debug(`Step ${stepNode.step.id} suspended`);
+              this.logger.debug(`Step ${stepNode.step.id} suspended`, {
+                stepId: stepNode.step.id,
+                runId: this.#runId,
+              });
             },
             assign({
               steps: ({ context }: { context: WorkflowContext }) => ({
@@ -593,7 +628,10 @@ export class Workflow<
         },
         executing: {
           entry: () => {
-            this.logger.debug(`Step ${stepNode.step.id} executing`);
+            this.logger.debug(`Step ${stepNode.step.id} executing`, {
+              stepId: stepNode.step.id,
+              runId: this.#runId,
+            });
           },
           on: {
             SUSPENDED: {
@@ -620,7 +658,11 @@ export class Workflow<
               target: 'runningSubscribers',
               actions: [
                 ({ event }: { event: any }) =>
-                  this.logger.debug(`Step ${stepNode.step.id} finished executing`, { output: event.output }),
+                  this.logger.debug(`Step ${stepNode.step.id} finished executing`, {
+                    stepId: stepNode.step.id,
+                    output: event.output,
+                    runId: this.#runId,
+                  }),
                 { type: 'updateStepResult', params: { stepId: stepNode.step.id } },
                 { type: 'spawnSubscribers', params: { stepId: stepNode.step.id } },
               ],
@@ -633,10 +675,16 @@ export class Workflow<
         },
         runningSubscribers: {
           entry: () => {
-            this.logger.debug(`Step ${stepNode.step.id} running subscribers`);
+            this.logger.debug(`Step ${stepNode.step.id} running subscribers`, {
+              stepId: stepNode.step.id,
+              runId: this.#runId,
+            });
           },
           exit: () => {
-            this.logger.debug(`Step ${stepNode.step.id} finished running subscribers`);
+            this.logger.debug(`Step ${stepNode.step.id} finished running subscribers`, {
+              stepId: stepNode.step.id,
+              runId: this.#runId,
+            });
           },
           invoke: {
             src: 'spawnSubscriberFunction',
@@ -820,6 +868,7 @@ export class Workflow<
         });
 
         this.logger.debug(`Step ${stepNode.step.id} result`, {
+          stepId: stepNode.step.id,
           result,
           runId: this.#runId,
         });
@@ -834,12 +883,12 @@ export class Workflow<
         const stepConfig = stepNode.config;
         const attemptCount = context.attempts[stepNode.step.id];
 
-        this.logger.debug(`Checking conditions for ${stepNode.step.id}`, {
+        this.logger.debug(`Checking conditions for step ${stepNode.step.id}`, {
           stepId: stepNode.step.id,
           runId: this.#runId,
         });
 
-        this.logger.debug(`Attempt count for ${stepNode.step.id}`, {
+        this.logger.debug(`Attempt count for step ${stepNode.step.id}`, {
           attemptCount,
           attempts: context.attempts,
           runId: this.#runId,
@@ -859,12 +908,18 @@ export class Workflow<
           return { type: 'CONDITIONS_MET' as const };
         }
 
-        this.logger.debug(`Checking conditions for ${stepNode.step.id}`);
+        this.logger.debug(`Checking conditions for step ${stepNode.step.id}`, {
+          stepId: stepNode.step.id,
+          runId: this.#runId,
+        });
 
         if (typeof stepConfig?.when === 'function') {
           const conditionMet = await stepConfig.when({ context });
           if (conditionMet) {
-            this.logger.debug(`Condition met for ${stepNode.step.id}`);
+            this.logger.debug(`Condition met for step ${stepNode.step.id}`, {
+              stepId: stepNode.step.id,
+              runId: this.#runId,
+            });
             return { type: 'CONDITIONS_MET' as const };
           }
           if (!attemptCount || attemptCount < 0) {
@@ -1006,7 +1061,8 @@ export class Workflow<
     context: WorkflowContext;
     stepId: TStepId;
   }): Record<string, any> {
-    this.logger.debug(`Resolving variables for ${stepId}`, {
+    this.logger.debug(`Resolving variables for step ${stepId}`, {
+      stepId,
       runId: this.#runId,
     });
 
@@ -1077,7 +1133,8 @@ export class Workflow<
 
       const sourceData = stepId === 'trigger' ? context.triggerData : getStepResult(context.steps[stepId as string]);
 
-      this.logger.debug(`Got condition data from ${stepId}`, {
+      this.logger.debug(`Got condition data from step ${stepId}`, {
+        stepId,
         sourceData,
         runId: this.#runId,
       });
@@ -1160,6 +1217,22 @@ export class Workflow<
   #makeStepDef<TStepId extends TSteps[number]['id'], TSteps extends Step<any, any, any>[]>(
     stepId: TStepId,
   ): StepDef<TStepId, TSteps, any, any>[TStepId] {
+    const executeStep = (
+      handler: (data: any) => Promise<(data: any) => void>,
+      spanName: string,
+      attributes?: Record<string, string>,
+    ) => {
+      return async (data: any) => {
+        return await otlpContext.with(trace.setSpan(otlpContext.active(), this.#executionSpan as Span), async () => {
+          // @ts-ignore
+          return this.#mastra.telemetry.traceMethod(handler, {
+            spanName,
+            attributes,
+          })(data);
+        });
+      };
+    };
+
     const handler = async ({ context, ...rest }: ActionContext<TSteps[number]['inputSchema']>) => {
       const targetStep = this.#steps[stepId];
       if (!targetStep) throw new Error(`Step not found`);
@@ -1175,9 +1248,9 @@ export class Workflow<
 
       // Only trace if telemetry is available and action exists
       const finalAction = this.#mastra?.telemetry
-        ? this.#mastra?.telemetry.traceMethod(execute, {
-            spanName: `workflow.${this.name}.action.${stepId}`,
-            attributes: { componentName: this.name },
+        ? executeStep(execute, `workflow.${this.name}.action.${stepId}`, {
+            componentName: this.name,
+            runId: context.runId ?? this.#runId,
           })
         : execute;
 
@@ -1187,10 +1260,10 @@ export class Workflow<
     // Only trace handler if telemetry is available
 
     const finalHandler = ({ context, ...rest }: ActionContext<TSteps[number]['inputSchema']>) => {
-      if (this.#mastra?.telemetry) {
-        return this.#mastra.telemetry.traceMethod(handler, {
-          spanName: `workflow.${this.name}.step.${stepId}`,
-          attributes: { componentName: this.name },
+      if (this.#executionSpan) {
+        return executeStep(handler, `workflow.${this.name}.step.${stepId}`, {
+          componentName: this.name,
+          runId: context.runId ?? this.#runId,
         })({ context, ...rest });
       }
 
@@ -1297,128 +1370,12 @@ export class Workflow<
     return null;
   }
 
-  #hasStateChanged(previous: WorkflowRunState | null, current: WorkflowRunState): boolean {
-    if (!previous) return true;
+  watch(onTransition: (state: WorkflowRunState) => void): () => void {
+    this.#onStepTransition.add(onTransition);
 
-    // Compare active paths
-    const previousPaths = previous.activePaths;
-    const currentPaths = current.activePaths;
-
-    // Check if number of active paths changed
-    if (previousPaths.length !== currentPaths.length) return true;
-
-    // Compare each path
-    for (let i = 0; i < currentPaths.length; i++) {
-      const prevPath = previousPaths[i];
-      const currPath = currentPaths[i];
-
-      // Check if path structure changed
-      if (JSON.stringify(prevPath?.stepPath) !== JSON.stringify(currPath?.stepPath)) return true;
-
-      // Check if status changed
-      if (prevPath?.status !== currPath?.status) return true;
-    }
-
-    // Check if step results changed
-    if (JSON.stringify(previous.context.steps) !== JSON.stringify(current.context.steps)) return true;
-
-    return false;
-  }
-
-  #getDeepestState(value: Record<string, any>): { stepId: string; status: string } {
-    type StateInfo = {
-      stepId: string;
-      status: string;
-      depth: number;
+    return () => {
+      this.#onStepTransition.delete(onTransition);
     };
-
-    // Helper to get depth of a state branch
-    const getStateDepth = (obj: any): number => {
-      if (typeof obj !== 'object' || obj === null) return 0;
-      return 1 + Math.max(...Object.values(obj).map(getStateDepth));
-    };
-
-    // Find the deepest active branch
-    let deepestBranch: StateInfo | null = null;
-
-    const traverse = (obj: Record<string, any>, path: string[] = []) => {
-      for (const [key, value] of Object.entries(obj)) {
-        if (typeof value === 'string') {
-          // If it's a leaf state, check its depth
-          const depth = path.length;
-          if (!deepestBranch || depth > deepestBranch.depth) {
-            deepestBranch = { stepId: key, status: value, depth };
-          }
-        } else if (typeof value === 'object' && value !== null) {
-          // Keep traversing
-          traverse(value, [...path, key]);
-        }
-      }
-    };
-
-    traverse(value);
-
-    if (!deepestBranch) {
-      // Provide a default or throw an error
-      throw new Error('No valid state found');
-    }
-
-    return {
-      stepId: (deepestBranch as StateInfo)?.stepId,
-      status: (deepestBranch as StateInfo)?.status,
-    };
-  }
-
-  async watch(
-    runId: string,
-    options: {
-      onTransition?: (state: WorkflowRunState) => void | Promise<void>;
-      pollInterval?: number;
-    } = {},
-  ): Promise<WorkflowRunState> {
-    const { onTransition, pollInterval = 1000 } = options;
-
-    return new Promise((resolve, reject) => {
-      let timeoutId: NodeJS.Timeout;
-      let previousState: WorkflowRunState | null = null;
-
-      const poll = async () => {
-        try {
-          const currentState = await this.getState(runId);
-
-          if (!currentState) {
-            reject(new Error(`No workflow found for runId: ${runId}`));
-            return;
-          }
-
-          // Only call onTransition if state has changed
-          if (onTransition && this.#hasStateChanged(previousState, currentState)) {
-            await onTransition(currentState);
-          }
-
-          previousState = currentState;
-
-          const deepState = this.#getDeepestState(currentState.value);
-
-          if (this.#isFinalState(deepState.status)) {
-            resolve(currentState);
-            return;
-          }
-
-          timeoutId = setTimeout(poll, pollInterval);
-        } catch (error) {
-          reject(error);
-        }
-      };
-
-      poll();
-
-      return () => {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-      };
-    });
   }
 
   async resume({
