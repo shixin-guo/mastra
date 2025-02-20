@@ -199,7 +199,7 @@ export function AppSidebar() {
                 <SidebarMenuButton tooltip="Docs" asChild>
                   {state === 'collapsed' ? (
                     <a
-                      href="https://mastra.ai/docs/guide"
+                      href="https://mastra.ai/docs"
                       target="_blank"
                       rel="noopener"
                       className="text-sm text-gray-300/60 hover:text-gray-100"
@@ -208,7 +208,7 @@ export function AppSidebar() {
                     </a>
                   ) : (
                     <a
-                      href="https://mastra.ai/docs/guide"
+                      href="https://mastra.ai/docs"
                       target="_blank"
                       rel="noopener"
                       className="text-sm text-gray-300/60 hover:text-gray-100"

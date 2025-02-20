@@ -1,6 +1,6 @@
 {
   "name": "@mastra/composio",
-  "version": "0.1.0-alpha.76",
+  "version": "0.1.1",
   "description": "",
   "type": "module",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     ".": {
       "import": {
         "types": "./dist/index.d.ts",
-        "default": "./dist/index.esm.js"
+        "default": "./dist/index.js"
       }
     },
     "./package.json": "./package.json"

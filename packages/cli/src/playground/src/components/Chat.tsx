@@ -2,7 +2,7 @@ import { AgentChat } from '@mastra/playground';
 import { useEffect, useState, useCallback } from 'react';
 import { useSWRConfig } from 'swr';
 
-import { Message, ChatProps } from '../types';
+import type { Message, ChatProps } from '../types';
 
 import { ChatContainer, ChatForm, ChatMessages } from './ui/chat';
 import { MessageInput } from './ui/message-input';
