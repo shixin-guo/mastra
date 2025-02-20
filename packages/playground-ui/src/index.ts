@@ -1,4 +1,4 @@
 import './index.css';
 
 export * from './chat-ui/chat';
-export * from './components/agents/agent/index';
+export * from './domains/agents/agent/index';
