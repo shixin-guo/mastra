@@ -1,11 +1,9 @@
-// import { Thread } from '@assistant-ui/react';
-// TODO: Move to primitive so we can style it
 import { Thread } from '@/components/assistant-ui/thread';
 
 import { MastraRuntimeProvider } from '@/services/mastra-runtime-provider';
 import { ChatProps } from '@/types';
 
-export const AgentChat = ({ agentId, agentName, threadId, initialMessages, memory, url }: ChatProps) => {
+export const AgentChat = ({ agentId, agentName, threadId, initialMessages, memory, baseUrl }: ChatProps) => {
   return (
     <MastraRuntimeProvider
       agentId={agentId}
@@ -13,7 +11,7 @@ export const AgentChat = ({ agentId, agentName, threadId, initialMessages, memor
       threadId={threadId}
       initialMessages={initialMessages}
       memory={memory}
-      url={url}
+      baseUrl={baseUrl}
     >
       <Thread />
     </MastraRuntimeProvider>

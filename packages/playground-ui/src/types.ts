@@ -1,15 +1,15 @@
 export interface Message {
-    id: string;
-    role: 'user' | 'assistant';
-    content: any;
-    isError?: boolean;
+  id: string;
+  role: 'user' | 'assistant';
+  content: any;
+  isError?: boolean;
 }
 
 export interface ChatProps {
-    agentId: string;
-    agentName?: string;
-    threadId?: string;
-    initialMessages?: Message[];
-    memory?: boolean;
-    url?: string;
+  agentId: string;
+  agentName?: string;
+  threadId?: string;
+  initialMessages?: Message[];
+  memory?: boolean;
+  baseUrl?: string;
 }

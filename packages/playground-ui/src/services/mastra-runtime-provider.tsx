@@ -7,14 +7,11 @@ import {
   AssistantRuntimeProvider,
 } from '@assistant-ui/react';
 import { MastraClient } from '@mastra/client-js';
-import { useState, ReactNode, useEffect, useMemo } from 'react';
+import { useState, ReactNode, useEffect, useMemo, useCallback } from 'react';
+
+import { mastraClient } from '@/lib/mastra-client';
 
 import { ChatProps } from '@/types';
-
-const createMastraClient = (url?: string) =>
-  new MastraClient({
-    baseUrl: url || 'http://localhost:4111',
-  });
 
 const convertMessage = (message: ThreadMessageLike): ThreadMessageLike => {
   return message;
@@ -27,7 +24,7 @@ export function MastraRuntimeProvider({
   agentName,
   memory,
   threadId,
-  url,
+  baseUrl,
 }: Readonly<{
   children: ReactNode;
 }> &
@@ -41,7 +38,7 @@ export function MastraRuntimeProvider({
     }
   }, [initialMessages, threadId, memory]);
 
-  const mastra = useMemo(() => createMastraClient(url), [url]);
+  const mastra = useMemo(() => mastraClient(baseUrl), [baseUrl]);
 
   const onNew = async (message: AppendMessage) => {
     if (message.content[0]?.type !== 'text') throw new Error('Only text messages are supported');
