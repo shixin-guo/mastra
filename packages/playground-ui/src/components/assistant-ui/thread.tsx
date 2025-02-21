@@ -14,41 +14,62 @@ const suggestions = ['What capabilities do you have?', 'How can you help me?', '
 export const Thread: FC = () => {
   return (
     <ThreadPrimitive.Root
-      className="bg-background flex flex-col box-border relative h-full"
       style={{
-        ['--thread-max-width' as string]: '42rem',
+        margin: '0 auto',
       }}
+      className="bg-background  flex flex-col box-border relative h-full"
     >
       <ThreadPrimitive.Viewport
         style={{
           paddingTop: '2rem',
-          paddingInline: '1rem',
+          paddingInline: '2rem',
           background: 'inherit',
           scrollBehavior: 'smooth',
           overflowY: 'scroll',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          height: '100%',
-          flexGrow: 1,
+          height: 'calc(100vh - 65px)',
+          paddingBottom: '108px',
         }}
       >
-        <ThreadWelcome />
-        <ThreadPrimitive.Messages
-          components={{
-            UserMessage: UserMessage,
-            EditComposer: EditComposer,
-            AssistantMessage: AssistantMessage,
+        <div
+          style={{
+            width: '42rem',
           }}
-        />
+        >
+          <ThreadWelcome />
+          <ThreadPrimitive.Messages
+            components={{
+              UserMessage: UserMessage,
+              EditComposer: EditComposer,
+              AssistantMessage: AssistantMessage,
+            }}
+          />
+        </div>
 
         <ThreadPrimitive.If empty={false}>
           <div className="min-h-8 flex-grow" />
         </ThreadPrimitive.If>
       </ThreadPrimitive.Viewport>
-      <div className="max-w-[var(--thread-max-width)] bg-[#0f0f0f] px-4">
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '48rem',
+          position: 'absolute',
+          bottom: 0,
+          margin: '0 auto',
+          zIndex: 10,
+          paddingBottom: '0.5em',
+          left: '50%',
+          transform: 'translate(-50%)',
+        }}
+        className="px-4"
+      >
         <div className="flex flex-col gap-2">
-          <ThreadWelcomeSuggestions />
+          <ThreadPrimitive.Empty>
+            <ThreadWelcomeSuggestions />
+          </ThreadPrimitive.Empty>
           <Composer />
         </div>
       </div>
@@ -73,7 +94,13 @@ const ThreadScrollToBottom: FC = () => {
 const ThreadWelcome: FC = () => {
   return (
     <ThreadPrimitive.Empty>
-      <div className="max-w-[var(--thread-max-width)] flex w-full flex-grow flex-col">
+      <div
+        style={{
+          maxWidth: '48rem',
+          margin: '0 auto',
+        }}
+        className="max-w-[48rem] flex w-full flex-grow flex-col"
+      >
         <div className="flex w-full flex-grow flex-col items-center justify-center">
           <Avatar>
             <AvatarFallback>C</AvatarFallback>
@@ -108,15 +135,23 @@ const Composer: FC = () => {
     <ComposerPrimitive.Root
       style={{
         borderRadius: '16px',
+        background: '#0f0f0f',
+        boxShadow: '0px 8px 0px 0px #0f0f0f',
       }}
       className="relative focus-within:border-ring/20 flex w-full flex-wrap items-end border bg-inherit px-2.5 shadow-sm transition-colors ease-in"
     >
-      <ComposerPrimitive.Input
-        rows={1}
-        autoFocus
-        placeholder="Write a message..."
-        className="placeholder:text-muted-foreground max-h-40 w-3/4 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
-      />
+      <ComposerPrimitive.Input asChild>
+        <textarea
+          style={{
+            height: '98px',
+          }}
+          className="placeholder:text-muted-foreground max-h-40 w-3/4 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
+          autoFocus
+          placeholder="Write a message..."
+          name=""
+          id=""
+        ></textarea>
+      </ComposerPrimitive.Input>
       <ComposerAction />
     </ComposerPrimitive.Root>
   );
@@ -187,7 +222,13 @@ const UserActionBar: FC = () => {
 
 const EditComposer: FC = () => {
   return (
-    <ComposerPrimitive.Root className="bg-muted max-w-[var(--thread-max-width)] my-4 flex w-full flex-col gap-2 rounded-xl">
+    <ComposerPrimitive.Root
+      style={{
+        maxWidth: '48rem',
+        margin: '0 auto',
+      }}
+      className="bg-muted max-w-[48rem] my-4 flex w-full flex-col gap-2 rounded-xl"
+    >
       <ComposerPrimitive.Input className="text-foreground flex h-8 w-full resize-none bg-transparent p-4 pb-0 outline-none" />
 
       <div className="mx-3 mb-3 flex items-center justify-center gap-2 self-end">

@@ -12,11 +12,11 @@ import { CopyButton } from './copy-button';
 import { highlight } from './syntax-highlighter';
 
 interface MarkdownRendererProps {
-  children: string;
+  children?: string;
 }
 
 export function MarkdownRenderer({ children }: MarkdownRendererProps) {
-  const processedText = children.replace(/\\n/g, '\n');
+  const processedText = children?.replace(/\\n/g, '\n');
 
   return (
     <Markdown remarkPlugins={[remarkGfm]} components={COMPONENTS as Components} className="space-y-3">
@@ -78,7 +78,7 @@ interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
   language: string;
 }
 
-const CodeBlock = ({ children, className, language, ...restProps }: CodeBlockProps) => {
+export const CodeBlock = ({ children, className, language, ...restProps }: CodeBlockProps) => {
   const code = typeof children === 'string' ? children : childrenTakeAllStringContents(children);
 
   const preClass = cn(
@@ -132,7 +132,7 @@ function childrenTakeAllStringContents(element: unknown): string {
   return '';
 }
 
-const COMPONENTS = {
+export const COMPONENTS = {
   h1: withClass('h1', 'text-2xl font-semibold'),
   h2: withClass('h2', 'font-semibold text-xl'),
   h3: withClass('h3', 'font-semibold text-lg'),
@@ -141,7 +141,7 @@ const COMPONENTS = {
   strong: withClass('strong', 'font-semibold'),
   a: withClass('a', 'text-primary underline underline-offset-2'),
   blockquote: withClass('blockquote', 'border-l-2 border-primary pl-4'),
-  code: ({ children, className, ...rest }: { children: React.ReactNode; className?: string }) => {
+  code: ({ children, className, ...rest }: { children?: React.ReactNode; className?: string }) => {
     const match = /language-(\w+)/.exec(className || '');
     return match ? (
       <CodeBlock className={className} language={match[1]} {...rest}>
