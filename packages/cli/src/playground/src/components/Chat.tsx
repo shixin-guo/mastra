@@ -1,4 +1,4 @@
-import { AgentChat } from '@mastra/playground';
+import { AgentChat } from '@mastra/playground-ui';
 import { useEffect, useState, useCallback } from 'react';
 import { useSWRConfig } from 'swr';
 
@@ -143,7 +143,6 @@ export function Chat({ agentId, initialMessages = [], agentName, threadId, memor
       agentName={agentName}
       threadId={threadId}
       memory={memory}
-      url={url}
     />
   );
   // return (
