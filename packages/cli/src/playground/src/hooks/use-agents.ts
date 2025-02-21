@@ -15,7 +15,7 @@ export const useAgents = () => {
     const fetchAgents = async () => {
       setIsLoading(true);
       try {
-        const res = await fetch('/api/agents');
+        const res = await fetch('http://localhost:4111/api/agents');
         if (!res.ok) {
           const error = await res.json();
           setAgents({});
@@ -53,7 +53,7 @@ export const useAgent = (agentId: string) => {
           setIsLoading(false);
           return;
         }
-        const res = await fetch(`/api/agents/${agentId}`);
+        const res = await fetch(`http://localhost:4111/api/agents/${agentId}`);
         if (!res.ok) {
           const error = await res.json();
           setAgent(null);

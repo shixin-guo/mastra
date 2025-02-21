@@ -1,11 +1,9 @@
 import { useNavigate } from 'react-router';
 
 import { Agent } from '@/components/ui/app-sidebar';
-import { Button } from '@/components/ui/button';
 import { Header } from '@/components/ui/header';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import { useAgents } from '@/hooks/use-agents';
 
@@ -14,70 +12,43 @@ function Agents() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col h-full relative overflow-hidden">
+    <div className="flex flex-col relative overflow-hidden">
       <Header title="Agents" />
-      <main className="flex-1 relative overflow-hidden">
-        <ScrollArea className="rounded-lg h-full">
-          <Table>
-            <TableHeader className="bg-[#171717] sticky top-0 z-10">
-              <TableRow className="border-gray-6 border-b-[0.1px] text-[0.8125rem]">
-                <TableHead className="w-[50px]"></TableHead>
-                <TableHead className="text-mastra-el-3">Name</TableHead>
-                <TableHead className="text-mastra-el-3 w-1/2">Instruction</TableHead>
-                <TableHead className="text-mastra-el-3">Provider</TableHead>
-                <TableHead className="text-mastra-el-3">Model</TableHead>
-                <TableHead className="text-mastra-el-3">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody className="border-b border-gray-6">
-              {isLoading ? (
-                <TableRow className="border-b-gray-6 border-b-[0.1px] text-[0.8125rem]">
-                  <TableCell>
-                    <Skeleton className="h-8 w-8" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-full" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-full" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-8 w-full" />
-                  </TableCell>
-                </TableRow>
-              ) : (
-                Object.entries(agents).map(([key, agent]) => (
-                  <TableRow key={key} className="border-b-gray-6 border-b-[0.1px] text-[0.8125rem]">
-                    <TableCell>
-                      <div className="h-8 w-full flex items-center justify-center">
-                        <Agent />
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium text-mastra-el-5">{agent.name}</TableCell>
-                    <TableCell className="truncate w-1/2 max-w-[500px] text-mastra-el-5">
-                      {agent.instructions}
-                    </TableCell>
-                    <TableCell className="text-mastra-el-5 text-sm">{agent.provider?.toUpperCase()}</TableCell>
-                    <TableCell className="text-mastra-el-5 text-sm">{agent.modelId}</TableCell>
-                    <TableCell className="text-mastra-el-5 text-sm">
-                      <span
-                        onClick={() => {
-                          navigate(`/agents/${key}/chat`);
-                        }}
-                        className="hover:no-underline"
-                      >
-                        <Button size="sm" variant="outline">
-                          Chat with agent
-                        </Button>
-                      </span>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
+      <section className="flex-1 relative overflow-hidden">
+        <ScrollArea className="h-full">
+          <section className="">
+            {isLoading ? (
+              <div className="border-b-gray-6 flex flex-col gap-2 px-2 pt-2 pb-2 border-b-[0.1px] text-[0.8125rem]">
+                <div>
+                  <Skeleton className="h-8 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-8 w-full" />
+                </div>
+                <div>
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              </div>
+            ) : (
+              Object.entries(agents).map(([key, agent]) => (
+                <button
+                  onClick={() => {
+                    navigate(`/agents/${key}/chat`);
+                  }}
+                  key={key}
+                  className=" divide-y-[0.5px] border-b-[0.5px] w-full px-3 py-3 flex items-center justify-between text-[0.8125rem]"
+                >
+                  <div className="flex items-center gap-2">
+                    <Agent />
+                    <div className="font-medium text-mastra-el-5">{agent.name}</div>
+                  </div>
+                  <div className="text-mastra-el-5 text-sm">{agent.provider?.toUpperCase()}</div>
+                </button>
+              ))
+            )}
+          </section>
         </ScrollArea>
-      </main>
+      </section>
     </div>
   );
 }

@@ -7,12 +7,12 @@ import { ThemeProvider } from './ui/theme-provider';
 
 export const Layout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <main className="bg-black font-sans">
+    <main className="bg-black overflow-hidden font-sans">
       <ThemeProvider defaultTheme="dark" attribute="class">
         <SidebarProvider>
           <AppSidebar />
-          <section className="h-screen py-3 pr-3 w-full overflow-hidden">
-            <div className="h-full w-full overflow-hidden rounded-sm border-[0.5px] border-[#303030] bg-[#0F0F0F]">
+          <section className="py-3 pr-3 w-full">
+            <div className="w-full h-full overflow-hidden rounded-sm border-[0.5px] border-[#303030] bg-[#0F0F0F]">
               {children}
             </div>
           </section>

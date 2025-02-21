@@ -1,4 +1,3 @@
-// import { Chat } from '@/components/Chat';
 import { AgentChat as Chat } from '@mastra/playground-ui';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
@@ -33,38 +32,36 @@ function Agent() {
 
   if (isAgentLoading) {
     return (
-      <main className="flex-1 relative grid grid-cols-[1fr_400px] divide-x">
+      <section className="flex-1 relative grid grid-cols-[1fr_400px] divide-x">
         <div className="p-4">
           <Skeleton className="h-[600px]" />
         </div>
         <div className="flex flex-col">
           <AgentInformation agentId={agentId!} />
         </div>
-      </main>
+      </section>
     );
   }
 
   return (
-    <section className="h-full">
-      <div
-        className={cn(
-          'relative grid h-full divide-x',
-          sidebar && memory?.result ? 'grid-cols-[256px_1fr_400px]' : 'grid-cols-[1fr_400px]',
-        )}
-      >
-        {sidebar && memory?.result ? <AgentSidebar agentId={agentId!} threadId={threadId!} /> : null}
-        <div className="relative h-full overflow-y-hidden">
-          <Chat
-            agentId={agentId!}
-            agentName={agent?.name}
-            threadId={threadId!}
-            initialMessages={isMessagesLoading ? undefined : (messages as Message[])}
-            memory={memory?.result}
-          />
-        </div>
-        <div className="flex flex-col">
-          <AgentInformation agentId={agentId!} />
-        </div>
+    <section
+      className={cn(
+        'relative grid h-full divide-x',
+        sidebar && memory?.result ? 'grid-cols-[256px_1fr_400px]' : 'grid-cols-[1fr_400px]',
+      )}
+    >
+      {sidebar && memory?.result ? <AgentSidebar agentId={agentId!} threadId={threadId!} /> : null}
+      <div className="relative overflow-y-hidden">
+        <Chat
+          agentId={agentId!}
+          agentName={agent?.name}
+          threadId={threadId!}
+          initialMessages={isMessagesLoading ? undefined : (messages as Message[])}
+          memory={memory?.result}
+        />
+      </div>
+      <div className="flex flex-col">
+        <AgentInformation agentId={agentId!} />
       </div>
     </section>
   );

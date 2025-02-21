@@ -22,12 +22,6 @@
     url('./assets/fonts/CommitMono.ttf') format('truetype');
 }
 
-html,
-body,
-#root {
-  height: 100%;
-}
-
 :root {
   --font-inter: 'Inter', sans-serif;
   --tasa-explorer: 'TasaExplorer', sans-serif;
