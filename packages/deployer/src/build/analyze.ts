@@ -59,6 +59,12 @@ async function analyze(
         },
       } satisfies Plugin,
       json(),
+      commonjs({
+        strictRequires: 'debug',
+        transformMixedEsModules: true,
+        ignoreTryCatch: false,
+        extensions: ['.js', '.ts'],
+      }),
       esbuild({
         target: 'node20',
         platform,
@@ -79,6 +85,8 @@ async function analyze(
   });
 
   await optimizerBundler.close();
+  debugger;
+  console.log(output[0].code, output[0].importedBindings);
 
   const depsToOptimize = new Map(Object.entries(output[0].importedBindings));
   for (const dep of depsToOptimize.keys()) {

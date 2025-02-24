@@ -15,7 +15,7 @@
         "default": "./dist/index.js"
       },
       "require": {
-        "types": "./dist/index.d.ts",
+        "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
     },
@@ -25,7 +25,7 @@
         "default": "./dist/*/index.js"
       },
       "require": {
-        "types": "./dist/*/index.d.ts",
+        "types": "./dist/*/index.d.cts",
         "default": "./dist/*/index.cjs"
       }
     },
@@ -35,7 +35,7 @@
         "default": "./dist/vector/libsql/index.js"
       },
       "require": {
-        "types": "./dist/vector/libsql/index.d.ts",
+        "types": "./dist/vector/libsql/index.d.cts",
         "default": "./dist/vector/libsql/index.cjs"
       }
     },
@@ -45,7 +45,7 @@
         "default": "./dist/utils.js"
       },
       "require": {
-        "types": "./dist/utils.d.ts",
+        "types": "./dist/utils.d.cts",
         "default": "./dist/utils.cjs"
       }
     },
@@ -55,7 +55,7 @@
         "default": "./dist/base.js"
       },
       "require": {
-        "types": "./dist/base.d.ts",
+        "types": "./dist/base.d.cts",
         "default": "./dist/base.cjs"
       }
     },
@@ -65,7 +65,7 @@
         "default": "./dist/telemetry/otel-vendor.js"
       },
       "require": {
-        "types": "./dist/telemetry/otel-vendor.d.ts",
+        "types": "./dist/telemetry/otel-vendor.d.cts",
         "default": "./dist/telemetry/otel-vendor.cjs"
       }
     },

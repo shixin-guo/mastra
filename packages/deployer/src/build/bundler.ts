@@ -1,4 +1,5 @@
 import alias from '@rollup/plugin-alias';
+import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import nodeResolve from '@rollup/plugin-node-resolve';
 import { fileURLToPath } from 'node:url';
@@ -28,6 +29,8 @@ export async function getInputOptions(
           mainFields: ['module', 'main'],
           browser: true,
         });
+
+  debugger;
 
   return {
     logLevel: process.env.MASTRA_BUNDLER_DEBUG === 'true' ? 'debug' : 'silent',
@@ -68,22 +71,6 @@ export async function getInputOptions(
           { find: /^\#mastra$/, replacement: entryFile.replaceAll('\\', '/') },
         ],
       }),
-      nodeResolvePlugin,
-      // for debugging
-      // {
-      //   name: 'logger',
-      //   //@ts-ignore
-      //   resolveId(id, ...args) {
-      //     console.log({ id, args });
-      //   },
-      //   // @ts-ignore
-      //   transform(code, id) {
-      //     if (code.includes('class Duplexify ')) {
-      //       console.log({ duplex: id });
-      //     }
-      //   },
-      // },
-      json(),
       esbuild({
         target: 'node20',
         platform,
@@ -92,6 +79,30 @@ export async function getInputOptions(
           'process.env.NODE_ENV': JSON.stringify('production'),
         },
       }),
+      commonjs({
+        include: /src/,
+        extensions: ['.js', '.ts'],
+        ignore: id => {
+          console.log({ id });
+          return false;
+        },
+      }),
+      nodeResolvePlugin,
+      // for debugging
+      {
+        name: 'logger',
+        //@ts-ignore
+        resolveId(id, ...args) {
+          console.log({ id, args });
+        },
+        // @ts-ignore
+        // transform(code, id) {
+        //   if (code.includes('class Duplexify ')) {
+        //     console.log({ duplex: id });
+        //   }
+        // },
+      },
+      json(),
       removeDeployer(entryFile),
       // treeshake unused imports
       esbuild({

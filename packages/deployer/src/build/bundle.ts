@@ -42,6 +42,8 @@ function getOptions(inputOptions: NormalizedInputOptions, platform: 'node' | 'br
           browser: true,
         });
 
+  debugger;
+
   return {
     logLevel: 'silent',
     ...inputOptions,

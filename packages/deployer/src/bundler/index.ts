@@ -133,6 +133,7 @@ export abstract class Bundler extends MastraBundler {
       inputOptions.input = { index: serverFile };
     }
 
+    console.log(serverFile);
     const bundler = await this.createBundler(inputOptions, { dir: bundleLocation });
 
     await bundler.write();
