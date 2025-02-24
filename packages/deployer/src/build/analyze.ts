@@ -63,6 +63,10 @@ async function analyze(
         strictRequires: 'debug',
         transformMixedEsModules: true,
         ignoreTryCatch: false,
+        requireReturnsDefault(id) {
+          console.log({ id });
+          return false;
+        },
         extensions: ['.js', '.ts'],
       }),
       esbuild({
