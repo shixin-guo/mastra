@@ -83,9 +83,8 @@ export function MastraRuntimeProvider({
 
           const chunk = decoder.decode(value);
           buffer += chunk;
-
-          const matches = buffer.matchAll(/0:"([^"]*)"/g);
-          const errorMatches = buffer.matchAll(/3:"([^"]*)"/g);
+          const matches = buffer.matchAll(/0:"((?:\\.|(?!").)*?)"/g);
+          const errorMatches = buffer.matchAll(/3:"((?:\\.|(?!").)*?)"/g);
 
           if (errorMatches) {
             for (const match of errorMatches) {
@@ -103,7 +102,7 @@ export function MastraRuntimeProvider({
           }
 
           for (const match of matches) {
-            const content = match[1];
+            const content = match[1].replace(/\\"/g, '"').replace(/\\n/g, '\n');
             assistantMessage += content;
             setMessages(currentConversation => {
               const message: ThreadMessageLike = {
