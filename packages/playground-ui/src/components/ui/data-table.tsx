@@ -15,6 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 import { PaginationResult } from '@/lib/pagination/types';
 import { cn } from '@/lib/utils';
+import { Skeleton } from './skeleton';
 
 interface DataTableProps<TData, TValue> {
   /**
@@ -82,6 +83,11 @@ interface DataTableProps<TData, TValue> {
    * selected row id to use for row selection
    */
   selectedRowId?: string;
+
+  /**
+   * loading state
+   */
+  isLoading?: boolean;
 }
 
 export const DataTable = <TData, TValue>({
@@ -100,6 +106,7 @@ export const DataTable = <TData, TValue>({
   emptyStateHeight,
   getRowId,
   selectedRowId,
+  isLoading,
 }: DataTableProps<TData, TValue>) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [{ pageIndex, pageSize }, setPagination] = useState<PaginationState>({
@@ -167,13 +174,33 @@ export const DataTable = <TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index} className="border-b-gray-6 border-b-[0.1px] text-[0.8125rem]">
+                    <TableCell className="p-0">
+                      <Skeleton className="h-8 w-8" />
+                    </TableCell>
+                    <TableCell className="p-0">
+                      <Skeleton className="h-8 w-full" />
+                    </TableCell>
+                    <TableCell className="p-0">
+                      <Skeleton className="h-8 w-full" />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map(row => (
                 <TableRow key={row.id} data-state={(row.getIsSelected() || row.id === selectedRowId) && 'selected'}>
                   {icon && <TableCell className="w-9 first:pl-3">{icon}</TableCell>}
                   {row.getVisibleCells().map(cell => (
                     <TableCell
-                      className={cn('last:pr-3', !icon && 'first:pl-3', !withoutBorder && 'border-r last:border-r-0')}
+                      className={cn(
+                        'p-0 last:pr-3',
+                        !icon && 'first:pl-3',
+                        !withoutBorder && 'border-r last:border-r-0',
+                      )}
                       key={cell.id}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
