@@ -32,8 +32,8 @@
   "author": "Mastra",
   "license": "ISC",
   "dependencies": {
-    "@assistant-ui/react": "^0.7.68",
-    "@assistant-ui/react-markdown": "^0.7.20",
+    "@assistant-ui/react": "^0.7.90",
+    "@assistant-ui/react-markdown": "^0.7.21",
     "@codemirror/lang-json": "^6.0.1",
     "@dagrejs/dagre": "^1.1.4",
     "@lezer/highlight": "^1.2.1",

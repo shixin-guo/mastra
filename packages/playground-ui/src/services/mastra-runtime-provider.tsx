@@ -9,8 +9,6 @@ import {
 import { MastraClient } from '@mastra/client-js';
 import { useState, ReactNode, useEffect, useMemo, useCallback } from 'react';
 
-import { mastraClient } from '@/lib/mastra-client';
-
 import { ChatProps } from '@/types';
 
 const convertMessage = (message: ThreadMessageLike): ThreadMessageLike => {

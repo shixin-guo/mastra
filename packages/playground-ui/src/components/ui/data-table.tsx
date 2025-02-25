@@ -179,7 +179,7 @@ export const DataTable = <TData, TValue>({
                 {Array.from({ length: 5 }).map((_, index) => (
                   <TableRow key={index} className="border-b-gray-6 border-b-[0.1px] text-[0.8125rem]">
                     <TableCell className="p-0">
-                      <Skeleton className="h-8 w-8" />
+                      <Skeleton className="h-8 w-full" />
                     </TableCell>
                     <TableCell className="p-0">
                       <Skeleton className="h-8 w-full" />
