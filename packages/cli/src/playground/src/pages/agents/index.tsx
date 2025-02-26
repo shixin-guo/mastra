@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { AgentsTable } from '@mastra/playground-ui';
 
 import { useAgents } from '@/hooks/use-agents';
+import { Barcode } from 'lucide-react';
 
 function Agents() {
   const { agents, isLoading } = useAgents();
@@ -14,6 +15,7 @@ function Agents() {
     name: agent.name,
     description: agent.instructions,
     provider: agent?.provider,
+    modelId: agent?.modelId,
   }));
 
   return (
@@ -53,18 +55,13 @@ function Agents() {
                   header: 'Model',
                   cell: ({ row }) => (
                     <button
-                      className="w-full h-full flex justify-start py-4"
+                      className="w-full h-full flex justify-end p-4"
                       onClick={() => {
                         navigate(`/agents/${row.original.id}/chat`);
                       }}
                     >
-                      <span
-                        onClick={() => {
-                          navigate(`/agents/${row.original.id}/chat`);
-                        }}
-                        className="text-mastra-el-5 text-sm"
-                      >
-                        {row.original.provider?.toUpperCase()}
+                      <span className="text-mastra-el-5 text-sm flex items-center gap-2">
+                        <span>powered by {row.original.modelId}</span> <Barcode className="w-4 h-4" />
                       </span>
                     </button>
                   ),
