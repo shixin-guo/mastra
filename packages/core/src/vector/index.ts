@@ -1,4 +1,5 @@
 import { MastraBase } from '../base';
+import type { Filter } from '../filter';
 
 export interface QueryResult {
   id: string;
@@ -32,11 +33,13 @@ export interface CreateIndexParams {
   metric?: 'cosine' | 'euclidean' | 'dotproduct';
 }
 
+export type VectorFilter = Filter | null | undefined;
+
 export interface QueryVectorParams {
   indexName: string;
   queryVector: number[];
   topK?: number;
-  filter?: Record<string, any> | null;
+  filter?: VectorFilter;
   includeVector?: boolean;
 }
 

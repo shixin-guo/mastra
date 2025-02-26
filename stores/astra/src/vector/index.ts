@@ -1,6 +1,13 @@
 import { DataAPIClient, Db, UUID } from '@datastax/astra-db-ts';
-import { type Filter } from '@mastra/core/filter';
-import { MastraVector, type QueryResult, type IndexStats } from '@mastra/core/vector';
+import {
+  MastraVector,
+  type QueryResult,
+  type IndexStats,
+  type CreateIndexParams,
+  type UpsertVectorParams,
+  type QueryVectorParams,
+  type VectorFilter,
+} from '@mastra/core/vector';
 
 import { AstraFilterTranslator } from './filter';
 
@@ -34,11 +41,7 @@ export class AstraVector extends MastraVector {
    * @param {'cosine' | 'euclidean' | 'dotproduct'} [metric=cosine] - The metric to use to sort vectors in the collection.
    * @returns {Promise<void>} A promise that resolves when the collection is created.
    */
-  async createIndex(
-    indexName: string,
-    dimension: number,
-    metric: 'cosine' | 'euclidean' | 'dotproduct' = 'cosine',
-  ): Promise<void> {
+  async createIndex({ indexName, dimension, metric = 'cosine' }: CreateIndexParams): Promise<void> {
     if (!Number.isInteger(dimension) || dimension <= 0) {
       throw new Error('Dimension must be a positive integer');
     }
@@ -60,12 +63,7 @@ export class AstraVector extends MastraVector {
    * @param {string[]} [ids] - An optional array of IDs corresponding to each vector. If not provided, new IDs will be generated.
    * @returns {Promise<string[]>} A promise that resolves to an array of IDs of the upserted vectors.
    */
-  async upsert(
-    indexName: string,
-    vectors: number[][],
-    metadata?: Record<string, any>[],
-    ids?: string[],
-  ): Promise<string[]> {
+  async upsert({ indexName, vectors, metadata, ids }: UpsertVectorParams): Promise<string[]> {
     const collection = this.#db.collection(indexName);
 
     // Generate IDs if not provided
@@ -81,7 +79,7 @@ export class AstraVector extends MastraVector {
     return result.insertedIds.map(id => (id || '').toString());
   }
 
-  transformFilter(filter?: Filter) {
+  transformFilter(filter?: VectorFilter) {
     const astraFilter = new AstraFilterTranslator();
     const translatedFilter = astraFilter.translate(filter ?? {});
     return translatedFilter;
@@ -97,13 +95,13 @@ export class AstraVector extends MastraVector {
    * @param {boolean} [includeVectors=false] - Whether to include the vectors in the response.
    * @returns {Promise<QueryResult[]>} A promise that resolves to an array of query results.
    */
-  async query(
-    indexName: string,
-    queryVector: number[],
-    topK?: number,
-    filter?: Filter,
-    includeVector: boolean = false,
-  ): Promise<QueryResult[]> {
+  async query({
+    indexName,
+    queryVector,
+    topK,
+    filter,
+    includeVector = false,
+  }: QueryVectorParams): Promise<QueryResult[]> {
     const collection = this.#db.collection(indexName);
 
     const translatedFilter = this.transformFilter(filter);

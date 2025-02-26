@@ -2,9 +2,15 @@ import { join } from 'path';
 import { createClient } from '@libsql/client';
 import type { Client as TursoClient, InValue } from '@libsql/client';
 
-import type { Filter } from '../../filter';
 import { MastraVector } from '../index';
-import type { CreateIndexParams, IndexStats, QueryVectorParams, QueryResult, UpsertVectorParams } from '../index';
+import type {
+  CreateIndexParams,
+  IndexStats,
+  QueryVectorParams,
+  QueryResult,
+  UpsertVectorParams,
+  VectorFilter,
+} from '../index';
 
 import { LibSQLFilterTranslator } from './filter';
 import { buildFilterQuery } from './sql-builder';
@@ -63,7 +69,7 @@ export class LibSQLVector extends MastraVector {
     return url;
   }
 
-  transformFilter(filter?: Filter | null) {
+  transformFilter(filter?: VectorFilter) {
     const libsqlFilter = new LibSQLFilterTranslator();
     const translatedFilter = libsqlFilter.translate(filter ?? {});
     return translatedFilter;

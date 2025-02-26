@@ -57,9 +57,9 @@ The Astra DB vector store requires:
 
 ## Methods
 
-- `createIndex(indexName, dimension, metric?)`: Create a new collection
-- `upsert(indexName, vectors, metadata?, ids?)`: Add or update vectors
-- `query(indexName, queryVector, topK?, filter?, includeVector?)`: Search for similar vectors
+- `createIndex({ indexName, dimension, metric? })`: Create a new collection
+- `upsert({ indexName, vectors, metadata?, ids })`: Add or update vectors
+- `query({ indexName, queryVector, topK?, filter?, includeVector? })`: Search for similar vectors
 - `listIndexes()`: List all collections
 - `describeIndex(indexName)`: Get collection statistics
 - `deleteIndex(indexName)`: Delete a collection
