@@ -474,48 +474,51 @@ export class Agent<
           memo[k] = {
             description: tool.description,
             parameters: tool.inputSchema,
-            execute: async args => {
-              // TODO: tool call cache should be on storage classes, not memory
-              // if (threadId && tool.enableCache && this.#mastra?.memory) {
-              //   const cachedResult = await this.#mastra.memory.getToolResult({
-              //     threadId,
-              //     toolArgs: args,
-              //     toolName: k as string,
-              //   });
-              //   if (cachedResult) {
-              //     this.logger.debug(`Cached Result ${k as string} runId: ${runId}`, {
-              //       cachedResult: JSON.stringify(cachedResult, null, 2),
-              //       runId,
-              //     });
-              //     return cachedResult;
-              //   }
-              // }
-              // this.logger.debug(`Cache not found or not enabled, executing tool runId: ${runId}`, {
-              //   runId,
-              // });
+            execute:
+              typeof tool?.execute === 'function'
+                ? async args => {
+                    // TODO: tool call cache should be on storage classes, not memory
+                    // if (threadId && tool.enableCache && this.#mastra?.memory) {
+                    //   const cachedResult = await this.#mastra.memory.getToolResult({
+                    //     threadId,
+                    //     toolArgs: args,
+                    //     toolName: k as string,
+                    //   });
+                    //   if (cachedResult) {
+                    //     this.logger.debug(`Cached Result ${k as string} runId: ${runId}`, {
+                    //       cachedResult: JSON.stringify(cachedResult, null, 2),
+                    //       runId,
+                    //     });
+                    //     return cachedResult;
+                    //   }
+                    // }
+                    // this.logger.debug(`Cache not found or not enabled, executing tool runId: ${runId}`, {
+                    //   runId,
+                    // });
 
-              try {
-                this.logger.debug(`[Agent:${this.name}] - Executing tool ${k}`, {
-                  name: k,
-                  description: tool.description,
-                  args,
-                  runId,
-                });
-                return (
-                  tool?.execute?.({
-                    context: args,
-                    mastra: this.#mastra,
-                    runId,
-                  }) ?? undefined
-                );
-              } catch (err) {
-                this.logger.error(`[Agent:${this.name}] - Failed execution`, {
-                  error: err,
-                  runId: runId,
-                });
-                throw err;
-              }
-            },
+                    try {
+                      this.logger.debug(`[Agent:${this.name}] - Executing tool ${k}`, {
+                        name: k,
+                        description: tool.description,
+                        args,
+                        runId,
+                      });
+                      return (
+                        tool?.execute?.({
+                          context: args,
+                          mastra: this.#mastra,
+                          runId,
+                        }) ?? undefined
+                      );
+                    } catch (err) {
+                      this.logger.error(`[Agent:${this.name}] - Failed execution`, {
+                        error: err,
+                        runId: runId,
+                      });
+                      throw err;
+                    }
+                  }
+                : undefined,
           };
         }
         return memo;
@@ -539,45 +542,48 @@ export class Agent<
           toolsFromToolsetsConverted[toolName] = {
             description: toolObj.description || '',
             parameters: toolObj.inputSchema,
-            execute: async args => {
-              // TODO: tool call cache should be on storage classes, not memory
-              // if (threadId && toolObj.enableCache && this.#mastra?.memory) {
-              //   const cachedResult = await this.#mastra.memory.getToolResult({
-              //     threadId,
-              //     toolArgs: args,
-              //     toolName,
-              //   });
-              //   if (cachedResult) {
-              //     this.logger.debug(`Cached Result ${toolName as string} runId: ${runId}`, {
-              //       cachedResult: JSON.stringify(cachedResult, null, 2),
-              //       runId,
-              //     });
-              //     return cachedResult;
-              //   }
-              // }
-              // this.logger.debug(`Cache not found or not enabled, executing tool runId: ${runId}`, {
-              //   runId,
-              // });
+            execute:
+              typeof toolObj.execute === 'function'
+                ? async args => {
+                    // TODO: tool call cache should be on storage classes, not memory
+                    // if (threadId && toolObj.enableCache && this.#mastra?.memory) {
+                    //   const cachedResult = await this.#mastra.memory.getToolResult({
+                    //     threadId,
+                    //     toolArgs: args,
+                    //     toolName,
+                    //   });
+                    //   if (cachedResult) {
+                    //     this.logger.debug(`Cached Result ${toolName as string} runId: ${runId}`, {
+                    //       cachedResult: JSON.stringify(cachedResult, null, 2),
+                    //       runId,
+                    //     });
+                    //     return cachedResult;
+                    //   }
+                    // }
+                    // this.logger.debug(`Cache not found or not enabled, executing tool runId: ${runId}`, {
+                    //   runId,
+                    // });
 
-              try {
-                this.logger.debug(`[Agent:${this.name}] - Executing tool ${toolName}`, {
-                  name: toolName,
-                  description: toolObj.description,
-                  args,
-                  runId,
-                });
-                return toolObj.execute!({
-                  context: args,
-                  runId,
-                });
-              } catch (err) {
-                this.logger.error(`[Agent:${this.name}] - Failed toolset execution`, {
-                  error: err,
-                  runId: runId,
-                });
-                throw err;
-              }
-            },
+                    try {
+                      this.logger.debug(`[Agent:${this.name}] - Executing tool ${toolName}`, {
+                        name: toolName,
+                        description: toolObj.description,
+                        args,
+                        runId,
+                      });
+                      return toolObj.execute!({
+                        context: args,
+                        runId,
+                      });
+                    } catch (err) {
+                      this.logger.error(`[Agent:${this.name}] - Failed toolset execution`, {
+                        error: err,
+                        runId: runId,
+                      });
+                      throw err;
+                    }
+                  }
+                : undefined,
           };
         });
       });
