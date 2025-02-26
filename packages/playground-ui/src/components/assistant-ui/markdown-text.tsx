@@ -39,18 +39,46 @@ const CodeHeader: FC<CodeHeaderProps> = ({ language, code }) => {
   };
 
   return (
-    <div className="flex items-center justify-between gap-4 rounded-t-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white">
+    <div
+      style={{
+        background: 'hsl(0 0% 100% / 0.06)',
+        borderTopRightRadius: '0.5rem',
+        borderTopLeftRadius: '0.5rem',
+        marginTop: '0.5rem',
+        border: '1px solid hsl(0 0% 20.4%)',
+        borderBottom: 'none',
+      }}
+      className="flex items-center justify-between gap-4 px-4 py-2 text-sm font-semibold text-white"
+    >
       <span className="lowercase [&>span]:text-xs">{language}</span>
       <TooltipIconButton tooltip="Copy" onClick={onCopy}>
-        {!isCopied && <CopyIcon />}
-        {isCopied && <CheckIcon />}
+        <span className="grid">
+          <span
+            key="checkmark"
+            style={{
+              gridArea: '1/1',
+            }}
+            className={cn('transition-transform', isCopied ? 'scale-100' : 'scale-0')}
+          >
+            <CheckIcon size={14} />
+          </span>
+          <span
+            style={{
+              gridArea: '1/1',
+            }}
+            className={cn('transition-transform', isCopied ? 'scale-0' : 'scale-100')}
+            key="copy"
+          >
+            <CopyIcon size={14} />
+          </span>
+        </span>
       </TooltipIconButton>
     </div>
   );
 };
 
 const useCopyToClipboard = ({
-  copiedDuration = 3000,
+  copiedDuration = 1500,
 }: {
   copiedDuration?: number;
 } = {}) => {
@@ -70,34 +98,73 @@ const useCopyToClipboard = ({
 
 const defaultComponents = memoizeMarkdownComponents({
   h1: ({ className, ...props }) => (
-    <h1 className={cn('mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight last:mb-0', className)} {...props} />
+    <h1
+      className={cn('mb-8 scroll-m-20 text-4xl font-extrabold tracking-tight last:mb-0', className)}
+      {...props}
+      style={{
+        marginBottom: '2rem',
+      }}
+    />
   ),
   h2: ({ className, ...props }) => (
     <h2
       className={cn('mb-4 mt-8 scroll-m-20 text-3xl font-semibold tracking-tight first:mt-0 last:mb-0', className)}
       {...props}
+      style={{
+        marginBottom: '1rem',
+        marginTop: '2rem',
+      }}
     />
   ),
   h3: ({ className, ...props }) => (
     <h3
-      className={cn('mb-4 mt-6 scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0 last:mb-0', className)}
+      className={cn('scroll-m-20 text-2xl font-semibold tracking-tight first:mt-0 last:mb-0', className)}
       {...props}
+      style={{
+        marginBottom: '1rem',
+        marginTop: '1.5rem',
+      }}
     />
   ),
   h4: ({ className, ...props }) => (
     <h4
-      className={cn('mb-4 mt-6 scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 last:mb-0', className)}
+      className={cn('scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 last:mb-0', className)}
       {...props}
+      style={{
+        marginBottom: '1rem',
+        marginTop: '1.5rem',
+      }}
     />
   ),
   h5: ({ className, ...props }) => (
-    <h5 className={cn('my-4 text-lg font-semibold first:mt-0 last:mb-0', className)} {...props} />
+    <h5
+      className={cn('font-semibold first:mt-0 last:mb-0', className)}
+      {...props}
+      style={{
+        marginBottom: '1rem',
+        marginTop: '1rem',
+      }}
+    />
   ),
   h6: ({ className, ...props }) => (
-    <h6 className={cn('my-4 font-semibold first:mt-0 last:mb-0', className)} {...props} />
+    <h6
+      className={cn('font-semibold first:mt-0 last:mb-0', className)}
+      {...props}
+      style={{
+        marginBottom: '1rem',
+        marginTop: '1rem',
+      }}
+    />
   ),
   p: ({ className, ...props }) => (
-    <p className={cn('mb-5 mt-5 leading-7 first:mt-0 last:mb-0', className)} {...props} />
+    <p
+      className={cn('leading-7 first:mt-0 last:mb-0', className)}
+      {...props}
+      style={{
+        marginBottom: '1.25rem',
+        marginTop: '1.25rem',
+      }}
+    />
   ),
   a: ({ className, ...props }) => (
     <a className={cn('text-primary font-medium underline underline-offset-4', className)} {...props} />
@@ -140,13 +207,37 @@ const defaultComponents = memoizeMarkdownComponents({
   ),
   sup: ({ className, ...props }) => <sup className={cn('[&>a]:text-xs [&>a]:no-underline', className)} {...props} />,
   pre: ({ className, ...props }) => (
-    <pre className={cn('overflow-x-auto rounded-b-lg bg-black p-4 text-white', className)} {...props} />
+    <pre
+      {...props}
+      style={{
+        borderBottomRightRadius: '0.5rem',
+        borderBottomLeftRadius: '0.5rem',
+        background: 'transparent',
+        fontSize: '0.875rem',
+        marginBottom: '0.5rem',
+        border: '1px solid hsl(0 0% 20.4%)',
+      }}
+      className={cn('overflow-x-auto p-4 text-white', className)}
+    />
   ),
   code: function Code({ className, ...props }) {
     const isCodeBlock = useIsMarkdownCodeBlock();
     return (
-      <pre>
-        <code className={cn(!isCodeBlock && 'bg-muted rounded border font-semibold', className)} {...props} />{' '}
+      <pre
+        style={{
+          fontSize: '0.875rem',
+          display: 'inline',
+        }}
+      >
+        <code
+          className={cn(!isCodeBlock && 'bg-muted rounded border font-semibold', className)}
+          {...props}
+          style={{
+            fontWeight: '400',
+            paddingBlock: !isCodeBlock ? '0.1em' : 0,
+            paddingInline: !isCodeBlock ? '0.3em' : 0,
+          }}
+        />{' '}
       </pre>
     );
   },

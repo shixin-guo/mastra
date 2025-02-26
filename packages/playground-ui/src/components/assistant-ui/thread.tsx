@@ -123,7 +123,7 @@ const ThreadWelcomeSuggestions: FC = () => {
           method="replace"
           autoSend
         >
-          <span className="line-clamp-2 text-ellipsis text-sm font-semibold">{suggestion}</span>
+          <span className="line-clamp-2 text-ellipsis text-sm font-medium">{suggestion}</span>
         </ThreadPrimitive.Suggestion>
       ))}
     </div>
@@ -145,7 +145,7 @@ const Composer: FC = () => {
           style={{
             height: '98px',
           }}
-          className="placeholder:text-muted-foreground max-h-40 w-3/4 flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
+          className="placeholder:text-muted-foreground max-h-40 w-full flex-grow resize-none border-none bg-transparent px-2 py-4 text-sm outline-none focus:ring-0 disabled:cursor-not-allowed"
           autoFocus
           placeholder="Write a message..."
           name=""
