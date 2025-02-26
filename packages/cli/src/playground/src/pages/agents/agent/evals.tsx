@@ -6,7 +6,7 @@ function AgentEvalsPage() {
 
   return (
     <main className="min-h-0">
-      <AgentEvals agentId={agentId!} />
+      <AgentEvals agentId={agentId!} baseUrl="" />
     </main>
   );
 }

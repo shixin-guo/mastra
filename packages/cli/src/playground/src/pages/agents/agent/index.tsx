@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { v4 as uuid } from '@lukeed/uuid';
 
-import { Skeleton } from '@/components/ui/skeleton';
-
 import { cn } from '@/lib/utils';
 
 import { AgentInformation } from '@/domains/agents/agent-information';
