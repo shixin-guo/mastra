@@ -4,15 +4,15 @@ import { AutomationIcon } from '@/components/icons/automation-icon';
 import { DataTable } from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const WorkflowsTable = <T,>({
+export const WorkflowsTable = ({
   title,
   workflowsList,
   columns,
   isLoading,
 }: {
   title?: React.ReactNode;
-  workflowsList: T[];
-  columns: ColumnDef<T>[];
+  workflowsList: any[];
+  columns: ColumnDef<any>[];
   isLoading?: boolean;
 }) => {
   return (

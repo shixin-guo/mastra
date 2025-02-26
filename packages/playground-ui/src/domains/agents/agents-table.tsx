@@ -4,15 +4,15 @@ import { AgentIcon } from '@/components/icons/agent-icon';
 import { DataTable } from '@/components/ui/data-table';
 import { ColumnDef } from '@tanstack/react-table';
 
-export const AgentsTable = <T,>({
+export const AgentsTable = ({
   title,
   agentsList,
   columns,
   isLoading,
 }: {
   title?: React.ReactNode;
-  agentsList: T[];
-  columns: ColumnDef<T>[];
+  agentsList: any[];
+  columns: ColumnDef<any>[];
   isLoading?: boolean;
 }) => {
   return (
