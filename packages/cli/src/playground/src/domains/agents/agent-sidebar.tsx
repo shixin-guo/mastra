@@ -53,7 +53,7 @@ export function AgentSidebar({ agentId, threadId }: { agentId: string; threadId:
             <Plus />
           </Button>
         </div>
-        <div className="text-small text-mastra-el-3">Your conversations will appear here once you start chatting!</div>
+        <div className="text-sm text-mastra-el-3">Your conversations will appear here once you start chatting!</div>
       </div>
     );
   }
@@ -61,7 +61,7 @@ export function AgentSidebar({ agentId, threadId }: { agentId: string; threadId:
   return (
     <ScrollArea className="h-full px-4 pb-4 w-[256px]">
       <div className="space-y-2">
-        <div className="flex justify-between items-center pl-2 sticky top-0 bg-mastra-bg-2 pt-4">
+        <div className="flex justify-between items-center pl-2 sticky top-0 pt-4">
           <div className="text-sm text-mastra-el-5">Chat history</div>
           <Button variant="primary" size="icon" onClick={() => navigate(`/agents/${agentId}/chat/${uuid()}`)}>
             <Plus />
@@ -72,7 +72,7 @@ export function AgentSidebar({ agentId, threadId }: { agentId: string; threadId:
           return (
             <div
               className={cn(
-                'flex cursor-pointer w-full px-2 items-center focus-visible:outline-none transition-colors focus-visible:ring-1 focus-visible:ring-mastra-border-4 gap-3 rounded-xs group text-small hover:bg-mastra-el-6/5',
+                'flex cursor-pointer w-full px-2 items-center focus-visible:outline-none transition-colors rounded-sm focus-visible:ring-1 focus-visible:ring-mastra-border-4 gap-3 rounded-xs group text-small hover:bg-mastra-el-6/5',
                 isActive ? 'bg-mastra-el-6/5' : '',
               )}
               key={thread.id}
