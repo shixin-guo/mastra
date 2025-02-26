@@ -48,7 +48,7 @@ function AgentTracesInner({
 
   if (firstCallLoading) {
     return (
-      <main className="flex-1 relative overflow-hidden">
+      <main className="flex-1 relative overflow-hidden h-full">
         <div className="h-full w-[calc(100%_-_400px)]">
           <Table>
             <TableHeader className="bg-mastra-bg-2 sticky top-0 z-10">
