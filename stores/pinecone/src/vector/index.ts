@@ -75,9 +75,8 @@ export class PineconeVector extends MastraVector {
   }
 
   transformFilter(filter?: VectorFilter) {
-    const pineconeFilter = new PineconeFilterTranslator();
-    const translatedFilter = pineconeFilter.translate(filter ?? {});
-    return translatedFilter;
+    const translator = new PineconeFilterTranslator();
+    return translator.translate(filter ?? {});
   }
 
   async query({
