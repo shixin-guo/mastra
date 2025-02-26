@@ -37,9 +37,6 @@ function Agent() {
   if (isAgentLoading) {
     return (
       <section className="flex-1 relative grid grid-cols-[1fr_400px] divide-x">
-        <div className="p-4">
-          <Skeleton className="h-[600px]" />
-        </div>
         <div className="flex flex-col">
           <AgentInformation agentId={agentId!} />
         </div>
