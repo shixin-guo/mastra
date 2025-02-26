@@ -122,9 +122,9 @@ export class ChromaVector extends MastraVector {
   async query({
     indexName,
     queryVector,
-    topK,
+    topK = 10,
     filter,
-    includeVector,
+    includeVector = false,
     documentFilter,
   }: ChromaQueryVectorParams): Promise<QueryResult[]> {
     const collection = await this.getCollection(indexName, true);

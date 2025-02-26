@@ -1,6 +1,12 @@
 import type { Filter } from '@mastra/core/filter';
 import { MastraVector } from '@mastra/core/vector';
-import type { QueryResult } from '@mastra/core/vector';
+import type {
+  CreateIndexParams,
+  QueryResult,
+  QueryVectorParams,
+  UpsertVectorParams,
+  VectorFilter,
+} from '@mastra/core/vector';
 import { Index } from '@upstash/vector';
 
 import { UpstashFilterTranslator } from './filter';
@@ -16,12 +22,7 @@ export class UpstashVector extends MastraVector {
     });
   }
 
-  async upsert(
-    indexName: string,
-    vectors: number[][],
-    metadata?: Record<string, any>[],
-    ids?: string[],
-  ): Promise<string[]> {
+  async upsert({ indexName, vectors, metadata, ids }: UpsertVectorParams): Promise<string[]> {
     const generatedIds = ids || vectors.map(() => crypto.randomUUID());
 
     const points = vectors.map((vector, index) => ({
@@ -36,26 +37,22 @@ export class UpstashVector extends MastraVector {
     return generatedIds;
   }
 
-  transformFilter(filter?: Filter) {
+  transformFilter(filter?: VectorFilter) {
     const translator = new UpstashFilterTranslator();
-    return translator.translate(filter);
+    return translator.translate(filter ?? {});
   }
 
-  async createIndex(
-    _indexName: string,
-    _dimension: number,
-    _metric: 'cosine' | 'euclidean' | 'dotproduct' = 'cosine',
-  ): Promise<void> {
+  async createIndex(_params: CreateIndexParams): Promise<void> {
     console.log('No need to call createIndex for Upstash');
   }
 
-  async query(
-    indexName: string,
-    queryVector: number[],
-    topK: number = 10,
-    filter?: Filter,
-    includeVector: boolean = false,
-  ): Promise<QueryResult[]> {
+  async query({
+    indexName,
+    queryVector,
+    topK = 10,
+    filter,
+    includeVector = false,
+  }: QueryVectorParams): Promise<QueryResult[]> {
     const ns = this.client.namespace(indexName);
 
     const filterString = this.transformFilter(filter);

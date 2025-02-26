@@ -80,7 +80,13 @@ export class QdrantVector extends MastraVector {
     return translator.translate(filter ?? {});
   }
 
-  async query({ indexName, queryVector, topK, filter, includeVector }: QueryVectorParams): Promise<QueryResult[]> {
+  async query({
+    indexName,
+    queryVector,
+    topK = 10,
+    filter,
+    includeVector = false,
+  }: QueryVectorParams): Promise<QueryResult[]> {
     const translatedFilter = this.transformFilter(filter);
 
     const results = (

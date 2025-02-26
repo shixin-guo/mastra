@@ -97,7 +97,7 @@ export class AstraVector extends MastraVector {
   async query({
     indexName,
     queryVector,
-    topK,
+    topK = 10,
     filter,
     includeVector = false,
   }: QueryVectorParams): Promise<QueryResult[]> {
