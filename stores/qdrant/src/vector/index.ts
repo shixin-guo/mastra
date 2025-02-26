@@ -62,7 +62,7 @@ export class QdrantVector extends MastraVector {
     return pointIds;
   }
 
-  async createIndex({ indexName, dimension, metric }: CreateIndexParams): Promise<void> {
+  async createIndex({ indexName, dimension, metric = 'cosine' }: CreateIndexParams): Promise<void> {
     if (!Number.isInteger(dimension) || dimension <= 0) {
       throw new Error('Dimension must be a positive integer');
     }
