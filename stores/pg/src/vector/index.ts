@@ -41,7 +41,7 @@ interface PgQueryVectorParams extends QueryVectorParams {
 
 interface PgCreateIndexParams extends CreateIndexParams {
   indexConfig?: IndexConfig;
-  defineIndex?: boolean;
+  buildIndex?: boolean;
 }
 
 interface PgDefineIndexParams {
@@ -183,7 +183,7 @@ export class PgVector extends MastraVector {
     dimension,
     metric = 'cosine',
     indexConfig = {},
-    defineIndex = true,
+    buildIndex = true,
   }: PgCreateIndexParams): Promise<void> {
     const client = await this.pool.connect();
     try {
@@ -219,8 +219,8 @@ export class PgVector extends MastraVector {
         );
       `);
 
-      if (defineIndex) {
-        await this.defineIndex({ indexName, metric, indexConfig });
+      if (buildIndex) {
+        await this.buildIndex({ indexName, metric, indexConfig });
       }
     } catch (error: any) {
       console.error('Failed to create vector table:', error);
@@ -230,7 +230,18 @@ export class PgVector extends MastraVector {
     }
   }
 
-  async defineIndex({ indexName, metric = 'cosine', indexConfig }: PgDefineIndexParams): Promise<void> {
+  /**
+   * @deprecated This function is deprecated. Use buildIndex instead
+   */
+  async defineIndex(
+    indexName: string,
+    metric: 'cosine' | 'euclidean' | 'dotproduct' = 'cosine',
+    indexConfig: IndexConfig,
+  ): Promise<void> {
+    return this.buildIndex({ indexName, metric, indexConfig });
+  }
+
+  async buildIndex({ indexName, metric = 'cosine', indexConfig }: PgDefineIndexParams): Promise<void> {
     const client = await this.pool.connect();
     try {
       await client.query(`DROP INDEX IF EXISTS ${indexName}_vector_idx`);
