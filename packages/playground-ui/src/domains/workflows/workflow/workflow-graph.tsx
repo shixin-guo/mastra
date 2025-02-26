@@ -3,6 +3,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useWorkflow } from '@/hooks/use-workflows';
 
 import { WorkflowGraphInner } from './workflow-graph-inner';
+import { lodashTitleCase } from '@/lib/string';
+import { AlertCircleIcon } from 'lucide-react';
 
 export function WorkflowGraph({ workflowId, baseUrl }: { workflowId: string; baseUrl: string }) {
   const { workflow, isLoading } = useWorkflow(workflowId, baseUrl);
@@ -17,8 +19,11 @@ export function WorkflowGraph({ workflowId, baseUrl }: { workflowId: string; bas
 
   if (!workflow) {
     return (
-      <div className="p-4">
-        <p>Workflow not found</p>
+      <div className="grid h-full place-items-center">
+        <div className="flex flex-col items-center gap-2">
+          <AlertCircleIcon />
+          <div>We couldn&apos;t find {lodashTitleCase(workflowId)} workflow.</div>
+        </div>
       </div>
     );
   }
