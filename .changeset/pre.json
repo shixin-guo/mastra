@@ -137,10 +137,12 @@
     "voice-agent": "1.0.0"
   },
   "changesets": [
+    "chubby-llamas-smash",
     "clear-seals-tease",
     "cool-papers-check",
     "five-hands-bet",
     "open-ideas-kick",
+    "sixty-webs-attend",
     "tasty-words-exist"
   ]
 }

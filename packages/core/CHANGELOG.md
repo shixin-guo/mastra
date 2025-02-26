@@ -1,5 +1,12 @@
 # @mastra/core
 
+## 0.4.3-alpha.1
+
+### Patch Changes
+
+- ed55f1d: Fixes to watch payload in workloads with nested branching
+- 8d13b14: Fixes early exits in workflows with branching
+
 ## 0.4.3-alpha.0
 
 ### Patch Changes
