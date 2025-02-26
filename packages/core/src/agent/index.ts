@@ -543,7 +543,7 @@ export class Agent<
             description: toolObj.description || '',
             parameters: toolObj.inputSchema,
             execute:
-              typeof toolObj.execute === 'function'
+              typeof toolObj?.execute === 'function'
                 ? async args => {
                     // TODO: tool call cache should be on storage classes, not memory
                     // if (threadId && toolObj.enableCache && this.#mastra?.memory) {

@@ -73,7 +73,7 @@ export class MastraLLM extends MastraLLMBase {
             description: tool.description!,
             parameters: tool.inputSchema,
             execute:
-              typeof tool.execute === 'function'
+              typeof tool?.execute === 'function'
                 ? async (props: any) => {
                     try {
                       this.logger.debug('Executing tool', {
