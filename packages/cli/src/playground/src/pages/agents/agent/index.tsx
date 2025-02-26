@@ -2,6 +2,7 @@ import { AgentChat as Chat } from '@mastra/playground-ui';
 // import {Chat}   from "@/components/Chat"
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { v4 as uuid } from '@lukeed/uuid';
 
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -27,7 +28,9 @@ function Agent() {
 
   useEffect(() => {
     if (memory?.result && !threadId) {
-      navigate(`/agents/${agentId}/chat/${crypto.randomUUID()}`);
+      // use @lukeed/uuid because we don't need a cryptographically secure uuid (this is a debugging local uuid)
+      // using crypto.randomUUID() on a domain without https (ex a local domain like local.lan:4111) will cause a TypeError
+      navigate(`/agents/${agentId}/chat/${uuid()}`);
     }
   }, [memory?.result, threadId]);
 
