@@ -1374,7 +1374,11 @@ describe('PgVector', () => {
       });
 
       it('should handle multiline flag', async () => {
-        await vectorDB.upsert(indexName, [[1, 0.1, 0]], [{ description: 'First line\nSecond line\nThird line' }]);
+        await vectorDB.upsert({
+          indexName,
+          vectors: [[1, 0.1, 0]],
+          metadata: [{ description: 'First line\nSecond line\nThird line' }],
+        });
 
         const results = await vectorDB.query({
           indexName,
@@ -1385,7 +1389,11 @@ describe('PgVector', () => {
       });
 
       it('should handle dotall flag', async () => {
-        await vectorDB.upsert(indexName, [[1, 0.1, 0]], [{ description: 'First\nSecond\nThird' }]);
+        await vectorDB.upsert({
+          indexName,
+          vectors: [[1, 0.1, 0]],
+          metadata: [{ description: 'First\nSecond\nThird' }],
+        });
 
         const withoutS = await vectorDB.query({
           indexName,
@@ -1434,7 +1442,10 @@ describe('PgVector', () => {
             hnsw: { m: 16, efConstruction: 64 },
           },
         });
-        await vectorDB.upsert(indexName, vectors);
+        await vectorDB.upsert({
+          indexName,
+          vectors,
+        });
       });
 
       afterAll(async () => {
@@ -1476,7 +1487,10 @@ describe('PgVector', () => {
             ivf: { lists: 2 }, // Small number for test data
           },
         });
-        await vectorDB.upsert(indexName, vectors);
+        await vectorDB.upsert({
+          indexName,
+          vectors,
+        });
       });
 
       afterAll(async () => {
