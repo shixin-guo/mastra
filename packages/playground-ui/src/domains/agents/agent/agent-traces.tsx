@@ -86,7 +86,7 @@ function AgentTracesInner({
 
   if (!traces || traces.length === 0) {
     return (
-      <main className="flex-1 relative overflow-hidden">
+      <main className="flex-1 h-full relative overflow-hidden">
         <div className="h-full w-[calc(100%_-_400px)]">
           <Table>
             <TableHeader className="bg-mastra-bg-2 sticky top-0 z-10">
@@ -114,7 +114,7 @@ function AgentTracesInner({
   }
 
   return (
-    <main className="flex-1 relative overflow-hidden" ref={containerRef}>
+    <main className="flex-1 h-full relative overflow-hidden" ref={containerRef}>
       <Traces traces={traces} />
       <SidebarItems
         sidebarWidth={sidebarWidth}
