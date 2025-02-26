@@ -72,7 +72,7 @@ export function AgentSidebar({ agentId, threadId }: { agentId: string; threadId:
           return (
             <div
               className={cn(
-                'flex cursor-pointer w-full px-2 items-center focus-visible:outline-none transition-colors rounded-sm focus-visible:ring-1 focus-visible:ring-mastra-border-4 gap-3 rounded-xs group text-small hover:bg-mastra-el-6/5',
+                'flex cursor-pointer w-full px-2 items-center focus-visible:outline-none transition-colors  focus-visible:ring-1 focus-visible:ring-mastra-border-4 gap-3 rounded-sm group text-small hover:bg-mastra-el-6/5',
                 isActive ? 'bg-mastra-el-6/5' : '',
               )}
               key={thread.id}
@@ -80,7 +80,7 @@ export function AgentSidebar({ agentId, threadId }: { agentId: string; threadId:
               <Link to={`/agents/${agentId}/chat/${thread.id}`} className="flex-1">
                 <p
                   className={cn(
-                    'py-[0.38rem] text-mastra-el-6/60 group-hover:text-mastra-el-6 transition-all  capitalize ',
+                    'py-[0.38rem] text-mastra-el-6/60 group-hover:text-mastra-el-6 transition-all text-sm  capitalize ',
                     isActive ? 'text-mastra-el-6' : '',
                   )}
                 >
