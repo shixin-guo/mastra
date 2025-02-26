@@ -1,5 +1,12 @@
 import { type Filter } from '@mastra/core/filter';
-import { MastraVector, type QueryResult } from '@mastra/core/vector';
+import {
+  MastraVector,
+  type CreateIndexParams,
+  type QueryResult,
+  type QueryVectorParams,
+  type UpsertVectorParams,
+  type VectorFilter,
+} from '@mastra/core/vector';
 import Cloudflare from 'cloudflare';
 
 import { VectorizeFilterTranslator } from './filter';
@@ -17,12 +24,7 @@ export class CloudflareVector extends MastraVector {
     });
   }
 
-  async upsert(
-    indexName: string,
-    vectors: number[][],
-    metadata?: Record<string, any>[],
-    ids?: string[],
-  ): Promise<string[]> {
+  async upsert({ indexName, vectors, metadata, ids }: UpsertVectorParams): Promise<string[]> {
     const generatedIds = ids || vectors.map(() => crypto.randomUUID());
 
     // Create NDJSON string - each line is a JSON object
@@ -51,17 +53,13 @@ export class CloudflareVector extends MastraVector {
     return generatedIds;
   }
 
-  transformFilter(filter?: Filter) {
+  transformFilter(filter?: VectorFilter) {
     const translator = new VectorizeFilterTranslator();
-    const translatedFilter = translator.translate(filter);
+    const translatedFilter = translator.translate(filter ?? {});
     return translatedFilter;
   }
 
-  async createIndex(
-    indexName: string,
-    dimension: number,
-    metric: 'cosine' | 'euclidean' | 'dotproduct' = 'cosine',
-  ): Promise<void> {
+  async createIndex({ indexName, dimension, metric = 'cosine' }: CreateIndexParams): Promise<void> {
     await this.client.vectorize.indexes.create({
       account_id: this.accountId,
       config: {
@@ -72,13 +70,13 @@ export class CloudflareVector extends MastraVector {
     });
   }
 
-  async query(
-    indexName: string,
-    queryVector: number[],
-    topK: number = 10,
-    filter?: Filter,
-    includeVector: boolean = false,
-  ): Promise<QueryResult[]> {
+  async query({
+    indexName,
+    queryVector,
+    topK = 10,
+    filter,
+    includeVector = false,
+  }: QueryVectorParams): Promise<QueryResult[]> {
     const translatedFilter = this.transformFilter(filter);
     const response = await this.client.vectorize.indexes.query(indexName, {
       account_id: this.accountId,
