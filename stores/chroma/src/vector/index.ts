@@ -1,12 +1,23 @@
 import { type Filter } from '@mastra/core/filter';
-import { MastraVector, type QueryResult, type IndexStats } from '@mastra/core/vector';
+import {
+  MastraVector,
+  type QueryResult,
+  type IndexStats,
+  type UpsertVectorParams,
+  type CreateIndexParams,
+  type QueryVectorParams,
+  type VectorFilter,
+} from '@mastra/core/vector';
 import { ChromaClient } from 'chromadb';
 
 import { ChromaFilterTranslator } from './filter';
 
-export interface DocumentMetadata {
-  content?: string;
-  metadata?: Record<string, any>;
+interface ChromaUpsertVectorParams extends UpsertVectorParams {
+  documents?: string[];
+}
+
+interface ChromaQueryVectorParams extends QueryVectorParams {
+  documentFilter?: VectorFilter;
 }
 
 export class ChromaVector extends MastraVector {
@@ -54,13 +65,7 @@ export class ChromaVector extends MastraVector {
     }
   }
 
-  async upsert(
-    indexName: string,
-    vectors: number[][],
-    metadata?: Record<string, any>[],
-    ids?: string[],
-    documents?: string[],
-  ): Promise<string[]> {
+  async upsert({ indexName, vectors, metadata, ids, documents }: ChromaUpsertVectorParams): Promise<string[]> {
     const collection = await this.getCollection(indexName);
 
     // Get index stats to check dimension
@@ -93,11 +98,7 @@ export class ChromaVector extends MastraVector {
     ip: 'dotproduct',
   };
 
-  async createIndex(
-    indexName: string,
-    dimension: number,
-    metric: 'cosine' | 'euclidean' | 'dotproduct' = 'cosine',
-  ): Promise<void> {
+  async createIndex({ indexName, dimension, metric = 'cosine' }: CreateIndexParams): Promise<void> {
     if (!Number.isInteger(dimension) || dimension <= 0) {
       throw new Error('Dimension must be a positive integer');
     }
@@ -114,19 +115,19 @@ export class ChromaVector extends MastraVector {
     });
   }
 
-  transformFilter(filter?: Filter) {
+  transformFilter(filter?: VectorFilter) {
     const chromaFilter = new ChromaFilterTranslator();
-    const translatedFilter = chromaFilter.translate(filter);
+    const translatedFilter = chromaFilter.translate(filter ?? {});
     return translatedFilter;
   }
-  async query(
-    indexName: string,
-    queryVector: number[],
-    topK: number = 10,
-    filter?: Filter,
-    includeVector: boolean = false,
-    documentFilter?: Filter,
-  ): Promise<QueryResult[]> {
+  async query({
+    indexName,
+    queryVector,
+    topK,
+    filter,
+    includeVector,
+    documentFilter,
+  }: ChromaQueryVectorParams): Promise<QueryResult[]> {
     const collection = await this.getCollection(indexName, true);
 
     const defaultInclude = ['documents', 'metadatas', 'distances'];
