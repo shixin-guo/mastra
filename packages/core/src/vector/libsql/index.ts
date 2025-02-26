@@ -4,10 +4,14 @@ import type { Client as TursoClient, InValue } from '@libsql/client';
 
 import type { Filter } from '../../filter';
 import { MastraVector } from '../index';
-import type { IndexStats, QueryResult } from '../index';
+import type { CreateIndexParams, IndexStats, QueryVectorParams, QueryResult, UpsertVectorParams } from '../index';
 
 import { LibSQLFilterTranslator } from './filter';
 import { buildFilterQuery } from './sql-builder';
+
+interface LibSQLQueryParams extends QueryVectorParams {
+  minScore?: number;
+}
 
 export class LibSQLVector extends MastraVector {
   private turso: TursoClient;
@@ -59,20 +63,20 @@ export class LibSQLVector extends MastraVector {
     return url;
   }
 
-  transformFilter(filter?: Filter) {
+  transformFilter(filter?: Filter | null) {
     const libsqlFilter = new LibSQLFilterTranslator();
     const translatedFilter = libsqlFilter.translate(filter ?? {});
     return translatedFilter;
   }
 
-  async query(
-    indexName: string,
-    queryVector: number[],
-    topK: number = 10,
-    filter?: Filter,
-    includeVector: boolean = false,
-    minScore: number = 0, // Optional minimum score threshold
-  ): Promise<QueryResult[]> {
+  async query({
+    indexName,
+    queryVector,
+    topK = 10,
+    filter,
+    includeVector = false,
+    minScore = 0, // Optional minimum score threshold
+  }: LibSQLQueryParams): Promise<QueryResult[]> {
     try {
       const vectorStr = `[${queryVector.join(',')}]`;
 
@@ -112,12 +116,7 @@ export class LibSQLVector extends MastraVector {
     }
   }
 
-  async upsert(
-    indexName: string,
-    vectors: number[][],
-    metadata?: Record<string, any>[],
-    ids?: string[],
-  ): Promise<string[]> {
+  async upsert({ indexName, vectors, metadata, ids }: UpsertVectorParams): Promise<string[]> {
     const tx = await this.turso.transaction('write');
 
     try {
@@ -160,11 +159,7 @@ export class LibSQLVector extends MastraVector {
     }
   }
 
-  async createIndex(
-    indexName: string,
-    dimension: number,
-    _metric: 'cosine' | 'euclidean' | 'dotproduct' = 'cosine',
-  ): Promise<void> {
+  async createIndex({ indexName, dimension }: CreateIndexParams): Promise<void> {
     try {
       // Validate inputs
       if (!indexName.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) {
