@@ -671,7 +671,7 @@ describe('QdrantVector', () => {
     });
 
     it('should handle null filter', async () => {
-      const results = await qdrant.query(testCollectionName, [1, 0, 0], 10, null as any);
+      const results = await qdrant.query(testCollectionName, [1, 0, 0], 10, null);
       const results2 = await qdrant.query(testCollectionName, [1, 0, 0], 10);
       expect(results).toEqual(results2);
       expect(results.length).toBeGreaterThan(0);

@@ -669,7 +669,7 @@ describe('CloudflareVector', () => {
       });
 
       it('should handle null filter', async () => {
-        const results = await vectorDB.query(testIndexName2, createVector(0, 1.0), 10, null as any);
+        const results = await vectorDB.query(testIndexName2, createVector(0, 1.0), 10, null);
         const results2 = await vectorDB.query(testIndexName2, createVector(0, 1.0), 10);
         expect(results).toEqual(results2);
         expect(results.length).toBeGreaterThan(0);

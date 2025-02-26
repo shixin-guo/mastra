@@ -942,7 +942,7 @@ describe('ChromaVector Integration Tests', () => {
         const results = await vectorDB.query({
           indexName: testIndexName2,
           queryVector: [1, 0, 0],
-          filter: null as any,
+          filter: null,
         });
         const results2 = await vectorDB.query({
           indexName: testIndexName2,

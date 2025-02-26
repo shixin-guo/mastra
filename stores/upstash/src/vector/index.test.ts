@@ -718,7 +718,7 @@ describe.skipIf(!process.env.UPSTASH_VECTOR_URL || !process.env.UPSTASH_VECTOR_T
         });
 
         it('should handle null filter', async () => {
-          const results = await vectorStore.query(filterIndexName, createVector(0), 10, null as any);
+          const results = await vectorStore.query(filterIndexName, createVector(0), 10, null);
           const results2 = await vectorStore.query(filterIndexName, createVector(0), 10);
           expect(results).toEqual(results2);
           expect(results.length).toBeGreaterThan(0);
