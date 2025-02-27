@@ -5,6 +5,8 @@ import type {
   CoreMessage,
   CoreToolMessage,
   CoreUserMessage,
+  GenerateObjectResult,
+  GenerateTextResult,
   LanguageModelV1,
   TextPart,
   ToolCallPart,
@@ -778,6 +780,14 @@ export class Agent<
 
   async generate<Z extends ZodSchema | JSONSchema7 | undefined = undefined>(
     messages: string | string[] | CoreMessage[],
+    args?: AgentGenerateOptions<Z> & { output?: 'text'; experimental_output?: undefined },
+  ): Promise<GenerateTextResult<any, any>>;
+  async generate<Z extends ZodSchema | JSONSchema7 | undefined = undefined>(
+    messages: string | string[] | CoreMessage[],
+    args?: AgentGenerateOptions<Z> & ({ output: Z } | { experimental_output: Z }),
+  ): Promise<GenerateObjectResult<Z extends ZodSchema ? z.infer<Z> : any>>;
+  async generate<Z extends ZodSchema | JSONSchema7 | undefined = undefined>(
+    messages: string | string[] | CoreMessage[],
     {
       context,
       threadId: threadIdInFn,
@@ -787,13 +797,13 @@ export class Agent<
       onStepFinish,
       runId,
       toolsets,
-      output = 'text' as const,
+      output = 'text',
       temperature,
       toolChoice = 'auto',
       experimental_output,
       telemetry,
     }: AgentGenerateOptions<Z> = {},
-  ): Promise<GenerateReturn<Z>> {
+  ): Promise<GenerateTextResult<any, any> | GenerateObjectResult<Z extends ZodSchema ? z.infer<Z> : any>> {
     let messagesToUse: CoreMessage[] = [];
 
     if (typeof messages === `string`) {
