@@ -1,4 +1,3 @@
-import type { Filter } from '@mastra/core/filter';
 import { MastraVector } from '@mastra/core/vector';
 import type {
   CreateIndexParams,

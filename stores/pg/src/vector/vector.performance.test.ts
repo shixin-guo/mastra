@@ -1,10 +1,9 @@
 import pg from 'pg';
 import { describe, it, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 
+import type { TestConfig, TestResult } from './performance.helpers';
 import {
   baseTestConfigs,
-  TestConfig,
-  TestResult,
   calculateTimeout,
   generateRandomVectors,
   findNearestBruteForce,
@@ -20,7 +19,7 @@ import {
   getIndexDescription,
   warmupQuery,
 } from './performance.helpers';
-import { IndexConfig, IndexType } from './types';
+import type { IndexConfig, IndexType } from './types';
 
 import { PgVector } from '.';
 

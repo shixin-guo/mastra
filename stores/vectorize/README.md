@@ -46,10 +46,11 @@ const results = await vectorStore.query({
 
 ## Configuration
 
-Required:
+The Vectorize vector store requires the following configuration:
 
-- `apiKey`: Your Vectorize API key
-- `projectId`: Your Vectorize project ID
+- `VECTORIZE_API_KEY`: Your Vectorize API key
+- `VECTORIZE_INDEX_NAME`: Name of the index to use
+- `VECTORIZE_PROJECT_ID`: Your Vectorize project ID
 
 ## Features
 

@@ -201,7 +201,7 @@ describe('PgVector', () => {
         beforeAll(async () => {
           try {
             await vectorDB.deleteIndex(indexName);
-          } catch (e) {
+          } catch {
             // Ignore if doesn't exist
           }
           await vectorDB.createIndex({ indexName, dimension: 3 });
@@ -262,7 +262,7 @@ describe('PgVector', () => {
     beforeAll(async () => {
       try {
         await vectorDB.deleteIndex(indexName);
-      } catch (e) {
+      } catch {
         // Ignore if doesn't exist
       }
       await vectorDB.createIndex({ indexName, dimension: 3 });

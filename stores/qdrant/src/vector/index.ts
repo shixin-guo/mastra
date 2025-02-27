@@ -1,14 +1,14 @@
-import { type Filter } from '@mastra/core/filter';
-import {
-  MastraVector,
-  type QueryResult,
-  type IndexStats,
-  type UpsertVectorParams,
-  type CreateIndexParams,
-  type QueryVectorParams,
-  type VectorFilter,
+import { MastraVector } from '@mastra/core/vector';
+import type {
+  QueryResult,
+  IndexStats,
+  CreateIndexParams,
+  UpsertVectorParams,
+  QueryVectorParams,
+  VectorFilter,
 } from '@mastra/core/vector';
-import { QdrantClient, type Schemas } from '@qdrant/js-client-rest';
+import { QdrantClient } from '@qdrant/js-client-rest';
+import type { Schemas } from '@qdrant/js-client-rest';
 
 import { QdrantFilterTranslator } from './filter';
 
@@ -68,6 +68,7 @@ export class QdrantVector extends MastraVector {
     }
     await this.client.createCollection(indexName, {
       vectors: {
+        // @ts-expect-error
         size: dimension,
         // @ts-expect-error
         distance: DISTANCE_MAPPING[metric],

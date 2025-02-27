@@ -1,18 +1,18 @@
 import type { Filter } from '@mastra/core/filter';
-import {
-  type CreateIndexParams,
-  type IndexStats,
-  type QueryResult,
-  type QueryVectorParams,
-  type UpsertVectorParams,
-  type VectorFilter,
-  MastraVector,
+import { MastraVector } from '@mastra/core/vector';
+import type {
+  IndexStats,
+  QueryResult,
+  QueryVectorParams,
+  CreateIndexParams,
+  UpsertVectorParams,
+  VectorFilter,
 } from '@mastra/core/vector';
 import pg from 'pg';
 
 import { PGFilterTranslator } from './filter';
 import { buildFilterQuery } from './sql-builder';
-import { type IndexConfig, type IndexType } from './types';
+import type { IndexConfig, IndexType } from './types';
 
 export interface PGIndexStats extends IndexStats {
   type: IndexType;

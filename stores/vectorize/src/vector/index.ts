@@ -1,11 +1,10 @@
-import { type Filter } from '@mastra/core/filter';
-import {
-  MastraVector,
-  type CreateIndexParams,
-  type QueryResult,
-  type QueryVectorParams,
-  type UpsertVectorParams,
-  type VectorFilter,
+import { MastraVector } from '@mastra/core/vector';
+import type {
+  QueryResult,
+  CreateIndexParams,
+  UpsertVectorParams,
+  QueryVectorParams,
+  VectorFilter,
 } from '@mastra/core/vector';
 import Cloudflare from 'cloudflare';
 
