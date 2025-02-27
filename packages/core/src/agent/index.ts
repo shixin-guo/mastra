@@ -784,7 +784,7 @@ export class Agent<
   ): Promise<GenerateTextResult<any, any>>;
   async generate<Z extends ZodSchema | JSONSchema7 | undefined = undefined>(
     messages: string | string[] | CoreMessage[],
-    args?: AgentGenerateOptions<Z> & ({ output: Z } | { experimental_output: Z }),
+    args?: AgentGenerateOptions<Z> & ({ output: Z } | { experimental_output: Z; output?: undefined }),
   ): Promise<GenerateObjectResult<Z extends ZodSchema ? z.infer<Z> : any>>;
   async generate<Z extends ZodSchema | JSONSchema7 | undefined = undefined>(
     messages: string | string[] | CoreMessage[],
