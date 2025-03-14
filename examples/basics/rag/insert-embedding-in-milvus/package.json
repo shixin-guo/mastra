@@ -1,0 +1,15 @@
+{
+  "name": "insert-embedding-in-milvus",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "pnpx tsx --env-file=.env index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "latest",
+    "@mastra/rag": "workspace:*",
+    "@mastra/milvus": "workspace:*",
+    "ai": "latest"
+  },
+  "version": "0.0.1"
+}
