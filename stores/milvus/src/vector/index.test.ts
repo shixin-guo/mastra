@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { MilvusVector } from '../src/vector';
+import { MilvusVector } from './index';
 
 // Mock the Milvus client
 vi.mock('@zilliz/milvus2-sdk-node', () => {
@@ -67,6 +67,9 @@ describe('MilvusVector', () => {
 
   describe('query', () => {
     it('should search vectors and return results', async () => {
+      // Mock hasCollection to return true for this test
+      vi.spyOn(milvusVector as any, 'hasCollection').mockResolvedValueOnce(true);
+      
       const results = await milvusVector.query(
         'test-index',
         [0.1, 0.2],
@@ -97,6 +100,9 @@ describe('MilvusVector', () => {
 
   describe('describeIndex', () => {
     it('should return index stats', async () => {
+      // Mock hasCollection to return true for this test
+      vi.spyOn(milvusVector as any, 'hasCollection').mockResolvedValueOnce(true);
+      
       const stats = await milvusVector.describeIndex('test-index');
       expect(stats.dimension).toBe(128);
       expect(stats.count).toBe(100);
@@ -113,6 +119,9 @@ describe('MilvusVector', () => {
 
   describe('updateIndexById', () => {
     it('should update a vector by ID', async () => {
+      // Mock hasCollection to return true for this test
+      vi.spyOn(milvusVector as any, 'hasCollection').mockResolvedValueOnce(true);
+      
       await milvusVector.updateIndexById('test-index', 'test-id', {
         vector: [0.1, 0.2],
         metadata: { text: 'updated' }
