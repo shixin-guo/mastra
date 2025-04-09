@@ -214,10 +214,30 @@ export class Memory extends MastraMemory {
   async deleteThread(threadId: string): Promise<void> {
     await this.storage.__deleteThread({ threadId });
 
-    // TODO: Also clean up vector storage if it exists
-    // if (this.vector) {
-    //   await this.vector.deleteThread(threadId); ?? filter by thread attributes and delete all returned messages?
-    // }
+    if (this.vector) {
+      try {
+        const { indexName } = await this.createEmbeddingIndex();
+        
+        const vectorResults = await this.vector.query({
+          indexName,
+          queryVector: [], // Empty vector as we're only using this for filtering
+          topK: 1000, // Set a high limit to get all vectors
+          filter: {
+            thread_id: threadId,
+          },
+        });
+        
+        for (const result of vectorResults) {
+          if (result.metadata?.message_id) {
+            await this.vector.deleteIndexById(indexName, result.metadata.message_id);
+          }
+        }
+        
+        this.logger.debug(`Cleaned up ${vectorResults.length} vectors for deleted thread ${threadId}`);
+      } catch (error) {
+        this.logger.error(`Failed to clean up vectors for deleted thread ${threadId}:`, error);
+      }
+    }
   }
 
   async saveMessages({
