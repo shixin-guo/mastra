@@ -186,6 +186,57 @@ export class PgVector extends MastraVector {
     }
   }
 
+  /**
+   * Efficiently upserts multiple vectors in a single database operation.
+   * This significantly improves performance for batch operations compared to
+   * using individual upsert calls.
+   *
+   * @param indexName - The name of the vector index to upsert into
+   * @param vectors - Array of vector data to upsert
+   * @param metadata - Optional metadata for each vector (must match vectors array length)
+   * @param ids - Optional custom IDs for each vector (must match vectors array length)
+   * @returns Array of vector IDs
+   */
+  async bulkUpsert(
+    indexName: string,
+    vectors: number[][],
+    metadata?: any[],
+    ids?: string[]
+  ): Promise<string[]> {
+    const client = await this.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const vectorIds = ids || vectors.map(() => crypto.randomUUID());
+
+      const query = `
+        INSERT INTO ${indexName} (vector_id, embedding, metadata)
+        SELECT * FROM unnest(
+          $1::text[],
+          $2::vector[],
+          $3::jsonb[]
+        )
+        ON CONFLICT (vector_id)
+        DO UPDATE SET
+          embedding = EXCLUDED.embedding,
+          metadata = EXCLUDED.metadata
+        RETURNING embedding::text
+      `;
+
+      await client.query(query, [
+        vectorIds,
+        vectors.map(v => `[${v.join(',')}]`),
+        (metadata || vectors.map(() => ({}))).map(m => JSON.stringify(m)),
+      ]);
+      await client.query('COMMIT');
+      return vectorIds;
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
   async createIndex(...args: ParamsToArgs<PgCreateIndexParams> | PgCreateIndexArgs): Promise<void> {
     const params = this.normalizeArgs<PgCreateIndexParams, PgCreateIndexArgs>('createIndex', args, [
       'indexConfig',
