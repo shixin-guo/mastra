@@ -49,4 +49,58 @@ describe('createTool', () => {
     });
     expect(user).toStrictEqual({ message: 'User not found' });
   });
+
+  it('should support schema validation for tool inputs', async () => {
+    const userSchema = z.object({
+      name: z.string(),
+      age: z.number().min(18),
+      email: z.string().email(),
+    });
+    
+    const mockExecute = vi.fn().mockImplementation(({ context }) => {
+      const result = userSchema.safeParse(context);
+      
+      if (!result.success) {
+        return Promise.resolve({
+          valid: false,
+          errors: result.error.format(),
+        });
+      }
+      
+      return Promise.resolve({
+        valid: true,
+        data: result.data,
+      });
+    });
+
+    const validationTool = createTool({
+      id: 'Validation tool',
+      description: 'This tool validates input using schema',
+      inputSchema: userSchema,
+      execute: mockExecute,
+    });
+
+    // Test with valid input
+    const validResult = await validationTool.execute({
+      context: { name: 'John Doe', age: 25, email: 'john.doe@example.com' },
+    });
+    
+    expect(validResult).toHaveProperty('valid', true);
+    expect(validResult).toHaveProperty('data');
+    expect(validResult.data).toStrictEqual({ 
+      name: 'John Doe', 
+      age: 25, 
+      email: 'john.doe@example.com' 
+    });
+    
+    // Test with invalid input
+    const invalidResult = await validationTool.execute({
+      context: { name: 'John Doe', age: 15, email: 'invalid-email' },
+    });
+    
+    expect(invalidResult).toHaveProperty('valid', false);
+    expect(invalidResult).toHaveProperty('errors');
+    expect(invalidResult.errors).toHaveProperty('age');
+    expect(invalidResult.errors).toHaveProperty('email');
+  });
 });
